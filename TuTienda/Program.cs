@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TuTienda.Data;
+using TuTienda.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,7 @@ builder.Services.AddControllersWithViews();
 // EF Core + SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddScoped<ProductoRepository>();
 
 var app = builder.Build();
 

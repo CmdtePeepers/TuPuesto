@@ -1,0 +1,80 @@
+@model IEnumerable<TuTienda.Models.Entities.Producto>
+
+@{
+    ViewData["Title"] = "Productos";
+    int paginaActual = ViewBag.PaginaActual;
+    int totalPaginas = ViewBag.TotalPaginas;
+    int elementosPorPagina = ViewBag.ElementosPorPagina;
+}
+
+<h1>Productos</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+<p>
+    <a asp-action="Create">Crear nuevo</a>
+</p>
+
+<form asp-action="ObtenerProductos" method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="nombre" value="@ViewBag.Nombre" class="form-control" placeholder="Buscar por nombre" />
+    </div>
+    <div class="col-auto">
+        <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" class="form-control" placeholder="Precio mínimo" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Activo</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>@item.Nombre</td>
+            <td>@item.Descripcion</td>
+            <td>@item.Precio</td>
+            <td>@item.Stock</td>
+            <td>@item.Activo</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@if (totalPaginas > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= totalPaginas; i++)
+            {
+                <li class="page-item @(i == paginaActual ? "active" : "")">
+                    <a class="page-link"
+                       asp-action="ObtenerProductos"
+                       asp-route-nombre="@ViewBag.Nombre"
+                       asp-route-precioMin="@ViewBag.PrecioMin"
+                       asp-route-paginaActual="@i"
+                       asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+    <p>Total de productos: @ViewBag.TotalRegistros</p>
+}

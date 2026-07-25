@@ -1,4 +1,4 @@
-﻿using Microusing Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuTienda.Models.Entities;
 using TuTienda.Data;
