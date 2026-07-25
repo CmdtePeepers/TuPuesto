@@ -1,0 +1,40 @@
+@model TuTienda.Models.Entities.Usuario
+
+@{
+    ViewData["Title"] = "Detalles del Usuario";
+}
+
+<h1>Detalles del Usuario</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombres)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombres)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Apellidos)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaRegistro)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.FechaRegistro)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreTienda)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreTienda)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DescripcionTienda)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.DescripcionTienda)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
+    <a asp-action="Index">Volver a la lista</a>
+</div>

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Tutienda.Models.Entities
+namespace TuTienda.Models.Entities
 {
     public class Rol
     {

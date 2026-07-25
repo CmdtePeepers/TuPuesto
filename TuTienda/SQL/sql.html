@@ -1,0 +1,169 @@
+﻿USE TuTienda;
+GO
+
+/* ============================================================
+   TABLA: Roles
+   ============================================================ */
+CREATE TABLE Roles (
+    Id      INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre  NVARCHAR(50) NOT NULL
+);
+GO
+
+/* ============================================================
+   TABLA: Usuarios
+   ============================================================ */
+CREATE TABLE Usuarios (
+    Id                  INT IDENTITY(1,1) PRIMARY KEY,
+    Nombres             NVARCHAR(100)   NOT NULL,
+    Apellidos           NVARCHAR(100)   NOT NULL,
+    Email               NVARCHAR(150)   NOT NULL,
+    PasswordHash        NVARCHAR(MAX)   NOT NULL,
+    RolId               INT             NOT NULL,
+    Activo              BIT             NOT NULL DEFAULT 1,
+    FechaRegistro       DATETIME2       NOT NULL DEFAULT GETDATE(),
+    NombreTienda        NVARCHAR(150)   NULL,
+    DescripcionTienda   NVARCHAR(500)   NULL,
+
+    CONSTRAINT FK_Usuarios_Roles FOREIGN KEY (RolId) REFERENCES Roles(Id)
+);
+GO
+
+CREATE UNIQUE INDEX IX_Usuarios_Email ON Usuarios(Email);
+GO
+
+/* ============================================================
+   TABLA: Categorias
+   ============================================================ */
+CREATE TABLE Categorias (
+    Id           INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre       NVARCHAR(100)  NOT NULL,
+    Descripcion  NVARCHAR(300)  NULL
+);
+GO
+
+/* ============================================================
+   TABLA: Productos
+   ============================================================ */
+CREATE TABLE Productos (
+    Id             INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre         NVARCHAR(150)   NOT NULL,
+    Descripcion    NVARCHAR(1000)  NULL,
+    Precio         DECIMAL(10,2)   NOT NULL,
+    Stock          INT             NOT NULL,
+    ImagenUrl      NVARCHAR(500)   NULL,
+    CategoriaId    INT             NOT NULL,
+    VendedorId     INT             NOT NULL,
+    Activo         BIT             NOT NULL DEFAULT 1,
+    FechaCreacion  DATETIME2       NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Productos_Categorias FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id),
+    CONSTRAINT FK_Productos_Usuarios_Vendedor FOREIGN KEY (VendedorId) REFERENCES Usuarios(Id)
+);
+GO
+
+/* ============================================================
+   TABLA: Carritos
+   ============================================================ */
+CREATE TABLE Carritos (
+    Id             INT IDENTITY(1,1) PRIMARY KEY,
+    UsuarioId      INT           NULL,
+    SessionId      NVARCHAR(200) NULL,
+    FechaCreacion  DATETIME2     NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_Carritos_Usuarios FOREIGN KEY (UsuarioId) REFERENCES Usuarios(Id)
+);
+GO
+
+/* ============================================================
+   TABLA: CarritoItems
+   ============================================================ */
+CREATE TABLE CarritoItems (
+    Id              INT IDENTITY(1,1) PRIMARY KEY,
+    CarritoId       INT           NOT NULL,
+    ProductoId      INT           NOT NULL,
+    Cantidad        INT           NOT NULL,
+    PrecioUnitario  DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT FK_CarritoItems_Carritos FOREIGN KEY (CarritoId) REFERENCES Carritos(Id) ON DELETE CASCADE,
+    CONSTRAINT FK_CarritoItems_Productos FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
+);
+GO
+
+/* ============================================================
+   TABLA: Pedidos
+   ============================================================ */
+CREATE TABLE Pedidos (
+    Id                    INT IDENTITY(1,1) PRIMARY KEY,
+    GrupoCompraId         UNIQUEIDENTIFIER NOT NULL,
+    ClienteId             INT           NOT NULL,
+    VendedorId            INT           NOT NULL,
+    FechaPedido           DATETIME2     NOT NULL DEFAULT GETDATE(),
+    Estado                INT           NOT NULL DEFAULT 0, -- 0=Pendiente,1=Confirmado,2=Entregado,3=Cancelado
+    Total                 DECIMAL(10,2) NOT NULL,
+    MetodoPagoSimulado    NVARCHAR(100) NOT NULL DEFAULT 'Pago simulado',
+
+    CONSTRAINT FK_Pedidos_Usuarios_Cliente FOREIGN KEY (ClienteId) REFERENCES Usuarios(Id),
+    CONSTRAINT FK_Pedidos_Usuarios_Vendedor FOREIGN KEY (VendedorId) REFERENCES Usuarios(Id)
+);
+GO
+
+/* ============================================================
+   TABLA: DetallesPedido
+   ============================================================ */
+CREATE TABLE DetallesPedido (
+    Id              INT IDENTITY(1,1) PRIMARY KEY,
+    PedidoId        INT           NOT NULL,
+    ProductoId      INT           NOT NULL,
+    Cantidad        INT           NOT NULL,
+    PrecioUnitario  DECIMAL(10,2) NOT NULL,
+    Subtotal        DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT FK_DetallesPedido_Pedidos FOREIGN KEY (PedidoId) REFERENCES Pedidos(Id) ON DELETE CASCADE,
+    CONSTRAINT FK_DetallesPedido_Productos FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
+);
+GO
+
+/* ============================================================
+   SEED: Roles iniciales (Administrador, Vendedor, Cliente)
+   ============================================================ */
+SET IDENTITY_INSERT Roles ON;
+INSERT INTO Roles (Id, Nombre) VALUES
+    (1, 'Administrador'),
+    (2, 'Vendedor'),
+    (3, 'Cliente');
+SET IDENTITY_INSERT Roles OFF;
+GO
+
+/* ============================================================
+   CREATE PROCEDURES
+ ============================================================ */
+CREATE OR ALTER PROCEDURE dbo.sp_FiltrarProductosPaginados
+    @nombre             NVARCHAR(150)  = '',
+    @precioMin          DECIMAL(10,2)  = 0,
+    @paginaActual       INT            = 1,
+    @elementosPorPagina INT            = 3
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @inicio INT = (@paginaActual - 1) * @elementosPorPagina;
+
+    SELECT
+        p.Id,
+        p.Nombre,
+        p.Descripcion,
+        p.Precio,
+        p.Stock,
+        p.ImagenUrl,
+        p.CategoriaId,
+        p.VendedorId,
+        p.Activo,
+        COUNT(*) OVER() AS TotalRegistros
+    FROM Productos p
+    WHERE (p.Nombre LIKE '%' + @nombre + '%' OR @nombre = '')
+      AND p.Precio >= @precioMin
+    ORDER BY p.Id
+    OFFSET @inicio ROWS FETCH NEXT @elementosPorPagina ROWS ONLY;
+END
+GO

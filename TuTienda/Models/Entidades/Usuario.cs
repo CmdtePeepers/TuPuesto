@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using TuTienda.Models.Entities;
 
-namespace Tutienda.Models.Entities
+namespace TuTienda.Models.Entities
 {
     public class Usuario
     {

@@ -1,13 +1,14 @@
 ﻿
 using System.ComponentModel.DataAnnotations.Schema;
+using TuTienda.Models.Enums;
 
 namespace TuTienda.Models.Entities
+
 {
     public class Pedido
     {
         public int Id { get; set; }
 
-        // Agrupa varios Pedidos (uno por vendedor) generados en una sola compra del cliente
         public Guid GrupoCompraId { get; set; }
 
         public int ClienteId { get; set; }

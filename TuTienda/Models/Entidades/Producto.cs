@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Tutienda.Models.Entities
+namespace TuTienda.Models.Entities
 {
     public class Producto
     {

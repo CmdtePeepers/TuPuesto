@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Tutienda.Models.Entities;
 
-namespace Tutienda.Models.Entities
+namespace TuTienda.Models.Entities
 {
     public class CarritoItem
     {
