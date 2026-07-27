@@ -132,13 +132,24 @@ namespace TuTienda.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
-            if (usuario != null)
+
+            if (usuario == null)
             {
-                _context.Usuarios.Remove(usuario);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                _context.Usuarios.Remove(usuario);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                ViewBag.Error = "No se puede eliminar este usuario porque tiene productos asignados.";
+                return View(usuario);
+            }
         }
 
         private bool UsuarioExists(int? id)

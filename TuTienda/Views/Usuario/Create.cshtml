@@ -1,68 +1,257 @@
+
 @model TuTienda.Models.Entities.Usuario
 
 @{
     ViewData["Title"] = "Crear Usuario";
 }
 
-<h1>Crear Usuario</h1>
+<style>
+    body {
+        background: linear-gradient(135deg, #1f2937, #111827);
+        min-height: 100vh;
+    }
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombres" class="control-label"></label>
-                <input asp-for="Nombres" class="form-control" />
-                <span asp-validation-for="Nombres" class="text-danger"></span>
+    .card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #991b1b, #dc2626);
+        padding: 18px;
+    }
+
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .card-body {
+        padding: 28px;
+        background: #fff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #991b1b;
+        font-size: .95rem;
+        margin-bottom: 5px;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        border: 2px solid #d1d5db;
+        padding: 10px 12px;
+        transition: .3s;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 12px rgba(220,38,38,.25);
+        }
+
+    .form-check-input {
+        width: 45px;
+        height: 22px;
+        cursor: pointer;
+    }
+
+        .form-check-input:checked {
+            background-color: #dc2626;
+            border-color: #dc2626;
+        }
+
+    .section-title {
+        color: #991b1b;
+        font-size: 1.05rem;
+        font-weight: bold;
+        border-left: 4px solid #dc2626;
+        padding-left: 10px;
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #991b1b, #dc2626);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 26px;
+        font-weight: 600;
+        transition: .3s;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #7f1d1d, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(185,28,28,.35);
+        }
+
+    .btn-dark {
+        background: #4b5563;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 26px;
+        transition: .3s;
+    }
+
+        .btn-dark:hover {
+            background: #374151;
+            transform: translateY(-2px);
+        }
+
+    .alert-danger {
+        border-left: 5px solid #dc2626;
+        border-radius: 12px;
+    }
+
+    .text-danger {
+        font-size: .85rem;
+        font-weight: 600;
+    }
+
+    hr {
+        margin: 25px 0;
+        border-top: 2px solid #e5e7eb;
+    }
+</style>
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card">
+
+                <div class="card-header text-white">
+
+                    <h3>
+                        <i class="bi bi-person-plus-fill me-2"></i>
+                        Crear Usuario
+                    </h3>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-action="Create">
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nombres" class="form-label"></label>
+                                <input asp-for="Nombres"
+                                       class="form-control"
+                                       placeholder="Ingrese los nombres" />
+                                <span asp-validation-for="Nombres" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Apellidos" class="form-label"></label>
+                                <input asp-for="Apellidos"
+                                       class="form-control"
+                                       placeholder="Ingrese los apellidos" />
+                                <span asp-validation-for="Apellidos" class="text-danger"></span>
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   placeholder="correo@ejemplo.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PasswordHash" class="form-label"></label>
+                            <input asp-for="PasswordHash"
+                                   type="password"
+                                   class="form-control"
+                                   placeholder="********" />
+                            <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RolId" class="form-label"></label>
+
+                            <select asp-for="RolId" class="form-select">
+                                <option value="">Seleccione un rol</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Vendedor</option>
+                                <option value="3">Cliente</option>
+                            </select>
+
+                            <span asp-validation-for="RolId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check form-switch mb-4">
+                            <input asp-for="Activo" class="form-check-input" />
+                            <label asp-for="Activo" class="form-check-label ms-2 fw-semibold">
+                                Usuario Activo
+                            </label>
+                        </div>
+
+                        <hr />
+
+                        <h5 class="section-title">
+                            <i class="bi bi-shop me-2"></i>
+                            Información de la Tienda
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="NombreTienda" class="form-label"></label>
+                            <input asp-for="NombreTienda"
+                                   class="form-control"
+                                   placeholder="Nombre de la tienda" />
+                            <span asp-validation-for="NombreTienda" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="DescripcionTienda" class="form-label"></label>
+                            <textarea asp-for="DescripcionTienda"
+                                      rows="3"
+                                      class="form-control"
+                                      placeholder="Descripción de la tienda"></textarea>
+                            <span asp-validation-for="DescripcionTienda" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index" class="btn btn-dark">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                Volver
+                            </a>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-person-plus-fill me-2"></i>
+                                Crear Usuario
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
             </div>
-            <div class="form-group">
-                <label asp-for="Apellidos" class="control-label"></label>
-                <input asp-for="Apellidos" class="form-control" />
-                <span asp-validation-for="Apellidos" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PasswordHash" class="control-label"></label>
-                <input asp-for="PasswordHash" class="form-control" type="password" />
-                <span asp-validation-for="PasswordHash" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RolId" class="control-label"></label>
-                <input asp-for="RolId" class="form-control" />
-                <small class="form-text text-muted">1 = Administrador, 2 = Vendedor, 3 = Cliente</small>
-                <span asp-validation-for="RolId" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="NombreTienda" class="control-label"></label>
-                <input asp-for="NombreTienda" class="form-control" />
-                <span asp-validation-for="NombreTienda" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DescripcionTienda" class="control-label"></label>
-                <input asp-for="DescripcionTienda" class="form-control" />
-                <span asp-validation-for="DescripcionTienda" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-            </div>
-        </form>
+
+        </div>
+
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Volver a la lista</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+

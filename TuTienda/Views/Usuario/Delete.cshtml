@@ -1,34 +1,233 @@
+
 @model TuTienda.Models.Entities.Usuario
 
 @{
     ViewData["Title"] = "Eliminar Usuario";
 }
 
-<h1>Eliminar Usuario</h1>
+<style>
+ 
+    body {
+        background: linear-gradient(135deg, #1f2937, #111827);
+        min-height: 100vh;
+    }
 
-<h3>¿Estás seguro que deseas eliminar este usuario?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombres)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombres)</dd>
+    .card {
+        border: none;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
+    }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Apellidos)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Apellidos)</dd>
+    .card-header {
+        background: linear-gradient(135deg, #7f1d1d, #b91c1c);
+        padding: 18px;
+    }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Email)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+        }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.RolId)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.RolId)</dd>
+    .card-body {
+        padding: 28px;
+        background: #fff;
+    }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
-    </dl>
+    .alert-warning {
+        background: #fff7ed;
+        border-left: 5px solid #ea580c;
+        color: #9a3412;
+        border-radius: 12px;
+        font-weight: 600;
+    }
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Cancelar</a>
-    </form>
+    .alert-danger {
+        background: #fef2f2;
+        border-left: 5px solid #b91c1c;
+        color: #7f1d1d;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+
+    .info-box {
+        background: #ffffff;
+        border-left: 5px solid #b91c1c;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 5px 15px rgba(185, 28, 28, .12);
+    }
+
+    dt {
+        color: #991b1b;
+        font-weight: 700;
+    }
+
+    dd {
+        color: #111827;
+        margin-bottom: 15px;
+    }
+
+    .badge {
+        padding: 8px 14px;
+        font-size: .85rem;
+        border-radius: 20px;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #991b1b, #dc2626);
+        border: none;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-weight: 600;
+        transition: all .3s;
+    }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #7f1d1d, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(185, 28, 28, .35);
+        }
+
+    .btn-dark {
+        background: #374151;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 28px;
+        transition: .3s;
+    }
+
+        .btn-dark:hover {
+            background: #1f2937;
+            transform: translateY(-2px);
+        }
+
+    hr {
+        margin: 22px 0;
+        border-top: 2px solid #e5e7eb;
+    }
+
+    
+</style>
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7 col-md-9">
+
+            <div class="card">
+
+                <div class="card-header text-white">
+
+                    <h3>
+                        <i class="bi bi-trash-fill me-2"></i>
+                        Eliminar Usuario
+                    </h3>
+
+                </div>
+
+                <div class="card-body">
+
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            @ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    } 
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        ¿Está seguro de que desea eliminar este usuario? Esta acción no se puede deshacer.
+                    </div>
+
+                    <div class="info-box">
+
+                        <dl class="row mb-0">
+
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.Nombres)
+                            </dt>
+
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Nombres)
+                            </dd>
+
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.Apellidos)
+                            </dt>
+
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Apellidos)
+                            </dd>
+
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.Email)
+                            </dt>
+
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Email)
+                            </dd>
+
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.RolId)
+                            </dt>
+
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.RolId)
+                            </dd>
+
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.Activo)
+                            </dt>
+
+                            <dd class="col-sm-8">
+                                @if (Model.Activo)
+                                {
+                                    <span class="badge bg-success">Activo</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Inactivo</span>
+                                }
+                            </dd>
+
+                        </dl>
+
+                    </div>
+
+                    <hr />
+
+                    <form asp-action="Delete">
+
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-flex justify-content-between">
+
+                            <a asp-action="Index" class="btn btn-dark">
+                                <i class="bi bi-arrow-left me-2"></i>
+                                Cancelar
+                            </a>
+
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash-fill me-2"></i>
+                                Eliminar Usuario
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
