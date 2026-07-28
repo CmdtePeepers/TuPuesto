@@ -14,7 +14,7 @@ namespace TuTienda.Controllers
     {
         private readonly AppDbContext _context;
         private readonly PasswordHasher<Usuario> _hasher = new();
-
+        private const string CARRITO_COOKIE = "TuTienda_CarritoSession";
         public AccountController(AppDbContext context)
         {
             _context = context;
@@ -32,7 +32,7 @@ namespace TuTienda.Controllers
         // Los Vendedores los crea el Administrador manualmente desde /Usuario/Create.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model, string? returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
@@ -51,7 +51,7 @@ namespace TuTienda.Controllers
                 Nombres = model.Nombres,
                 Apellidos = model.Apellidos,
                 Email = model.Email,
-                RolId = 3, // Cliente
+                RolId = 3,
                 Activo = true
             };
             usuario.PasswordHash = _hasher.HashPassword(usuario, model.Password);
@@ -60,9 +60,15 @@ namespace TuTienda.Controllers
             await _context.SaveChangesAsync();
 
             await IniciarSesion(usuario);
+            await FusionarCarritoDeInvitado(usuario);
 
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return RedirectToAction("Index", "Home");
         }
+
 
         // GET: Account/Login
         [HttpGet]
@@ -92,7 +98,19 @@ namespace TuTienda.Controllers
                 return View(model);
             }
 
-            var resultado = _hasher.VerifyHashedPassword(usuario, usuario.PasswordHash, model.Password);
+            PasswordVerificationResult resultado;
+            try
+            {
+                resultado = _hasher.VerifyHashedPassword(usuario, usuario.PasswordHash, model.Password);
+            }
+            catch (FormatException)
+            {
+                // El hash guardado no tiene un formato válido (ej: se insertó texto plano a mano)
+                ModelState.AddModelError(string.Empty, "Esta cuenta tiene un problema con su contraseña. Contacta al administrador.");
+                ViewBag.ReturnUrl = returnUrl;
+                return View(model);
+            }
+
             if (resultado == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError(string.Empty, "Correo o contraseña incorrectos.");
@@ -101,6 +119,7 @@ namespace TuTienda.Controllers
             }
 
             await IniciarSesion(usuario);
+            await FusionarCarritoDeInvitado(usuario);
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
@@ -108,6 +127,7 @@ namespace TuTienda.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
 
         // POST: Account/Logout
         [HttpPost]
@@ -144,6 +164,56 @@ namespace TuTienda.Controllers
             var principal = new ClaimsPrincipal(identidad);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        }
+        // Une el carrito que se armó como invitado (identificado por cookie) con el
+        // carrito del usuario que se acaba de loguear/registrar.
+        private async Task FusionarCarritoDeInvitado(Usuario usuario)
+        {
+            if (!Request.Cookies.TryGetValue(CARRITO_COOKIE, out var sessionId) || string.IsNullOrEmpty(sessionId))
+            {
+                return;
+            }
+
+            var carritoInvitado = await _context.Carritos
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.SessionId == sessionId);
+
+            if (carritoInvitado == null)
+            {
+                return;
+            }
+
+            var carritoUsuario = await _context.Carritos
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UsuarioId == usuario.Id);
+
+            if (carritoUsuario == null)
+            {
+                // El usuario no tenía carrito propio: el de invitado pasa a ser el suyo
+                carritoInvitado.UsuarioId = usuario.Id;
+                carritoInvitado.SessionId = null;
+            }
+            else
+            {
+                // Ya tenía carrito: fusionamos los items (sumando cantidades si se repite el producto)
+                foreach (var item in carritoInvitado.Items.ToList())
+                {
+                    var existente = carritoUsuario.Items.FirstOrDefault(i => i.ProductoId == item.ProductoId);
+                    if (existente != null)
+                    {
+                        existente.Cantidad += item.Cantidad;
+                        _context.CarritoItems.Remove(item);
+                    }
+                    else
+                    {
+                        item.CarritoId = carritoUsuario.Id;
+                    }
+                }
+                _context.Carritos.Remove(carritoInvitado);
+            }
+
+            await _context.SaveChangesAsync();
+            Response.Cookies.Delete(CARRITO_COOKIE);
         }
     }
 }

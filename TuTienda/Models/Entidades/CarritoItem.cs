@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using Tutienda.Models.Entities;
+using TuTienda.Models.Entities;
 
 namespace TuTienda.Models.Entities
 {

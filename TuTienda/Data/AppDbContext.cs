@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Tutienda.Models.Entities;
+
 using TuTienda.Models.Entities;
 
 namespace TuTienda.Data

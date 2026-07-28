@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuTienda.Models.Entities;
 using TuTienda.Data;
 
 namespace TuTienda.Controllers
 {
+    [Authorize(Roles = "Administrador")]
     public class CategoriaController : Controller
     {
         private readonly AppDbContext _context;
@@ -126,8 +128,7 @@ namespace TuTienda.Controllers
             return View(categoria);
         }
 
-       
-
+        // POST: Categoria/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

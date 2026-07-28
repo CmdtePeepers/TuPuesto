@@ -138,11 +138,15 @@ GO
 /* ============================================================
    CREATE PROCEDURES
  ============================================================ */
+USE TuTienda;
+GO
+
 CREATE OR ALTER PROCEDURE dbo.sp_FiltrarProductosPaginados
     @nombre             NVARCHAR(150)  = '',
     @precioMin          DECIMAL(10,2)  = 0,
+    @categoriaId        INT            = 0,   -- 0 = todas las categorías
     @paginaActual       INT            = 1,
-    @elementosPorPagina INT            = 3
+    @elementosPorPagina INT            = 8
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -163,7 +167,144 @@ BEGIN
     FROM Productos p
     WHERE (p.Nombre LIKE '%' + @nombre + '%' OR @nombre = '')
       AND p.Precio >= @precioMin
+      AND (p.CategoriaId = @categoriaId OR @categoriaId = 0)
+      AND p.Activo = 1
     ORDER BY p.Id
     OFFSET @inicio ROWS FETCH NEXT @elementosPorPagina ROWS ONLY;
 END
+GO
+
+/* ============================================================
+   CATEGORIAS
+   ============================================================ */
+INSERT INTO Categorias (Nombre, Descripcion)
+VALUES
+('Tecnología', 'Celulares, laptops y accesorios'),
+('Ropa', 'Prendas para hombres y mujeres'),
+('Hogar', 'Productos para el hogar'),
+('Deportes', 'Artículos deportivos'),
+('Libros', 'Libros y material educativo');
+GO
+
+/* ============================================================
+   USUARIOS
+   ============================================================ */
+
+-- Administrador
+INSERT INTO Usuarios
+(Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
+VALUES
+('Juan', 'Administrador', 'admin@tutienda.com', '123456', 1, NULL, NULL);
+
+-- Vendedores (RolId = 2)
+INSERT INTO Usuarios
+(Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
+VALUES
+('Carlos', 'Ramirez', 'carlos@tutienda.com', '123456', 2,
+ 'Tech Store', 'Venta de productos tecnológicos'),
+
+('María', 'Lopez', 'maria@tutienda.com', '123456', 2,
+ 'Moda Express', 'Ropa y accesorios'),
+
+('Luis', 'Torres', 'luis@tutienda.com', '123456', 2,
+ 'Casa Fácil', 'Todo para el hogar');
+
+-- Clientes (RolId = 3)
+INSERT INTO Usuarios
+(Nombres, Apellidos, Email, PasswordHash, RolId)
+VALUES
+('Pedro', 'Gomez', 'pedro@gmail.com', '123456', 3),
+
+('Ana', 'Perez', 'ana@gmail.com', '123456', 3),
+
+('José', 'Martinez', 'jose@gmail.com', '123456', 3);
+GO
+
+/* ============================================================
+   PRODUCTOS
+   ============================================================ */
+
+-- Carlos (Id = 2) -> Tecnología (CategoriaId = 1)
+INSERT INTO Productos
+(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+VALUES
+('Laptop Lenovo IdeaPad',
+ 'Laptop Ryzen 5, 16GB RAM, SSD 512GB',
+ 2499.90,
+ 12,
+ '/img/productos/laptop.jpg',
+ 1,
+ 2),
+
+('Mouse Logitech M170',
+ 'Mouse inalámbrico',
+ 59.90,
+ 40,
+ '/img/productos/mouse.jpg',
+ 1,
+ 2),
+
+('Teclado Mecánico Redragon',
+ 'Teclado RGB Switch Blue',
+ 189.90,
+ 18,
+ '/img/productos/teclado.jpg',
+ 1,
+ 2);
+
+-- María (Id = 3) -> Ropa (CategoriaId = 2)
+INSERT INTO Productos
+(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+VALUES
+('Polo Básico Blanco',
+ 'Algodón 100%',
+ 39.90,
+ 60,
+ '/img/productos/polo.jpg',
+ 2,
+ 3),
+
+('Casaca Jeans',
+ 'Casaca de mezclilla',
+ 129.90,
+ 20,
+ '/img/productos/casaca.jpg',
+ 2,
+ 3),
+
+('Zapatillas Urbanas',
+ 'Color negro',
+ 159.90,
+ 15,
+ '/img/productos/zapatillas.jpg',
+ 2,
+ 3);
+
+-- Luis (Id = 4) -> Hogar (CategoriaId = 3)
+INSERT INTO Productos
+(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+VALUES
+('Juego de Ollas',
+ 'Acero inoxidable',
+ 299.90,
+ 10,
+ '/img/productos/ollas.jpg',
+ 3,
+ 4),
+
+('Licuadora Oster',
+ '600W, vaso de vidrio',
+ 249.90,
+ 8,
+ '/img/productos/licuadora.jpg',
+ 3,
+ 4),
+
+('Silla Ergonómica',
+ 'Ideal para oficina',
+ 449.90,
+ 5,
+ '/img/productos/silla.jpg',
+ 3,
+ 4);
 GO

@@ -14,9 +14,12 @@
     <div class="alert alert-success">@TempData["Mensaje"]</div>
 }
 
-<p>
-    <a asp-action="Create">Crear nuevo</a>
-</p>
+@if (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))
+{
+    <p>
+        <a asp-action="Create">Crear nuevo</a>
+    </p>
+}
 
 <form asp-action="ObtenerProductos" method="get" class="row g-2 mb-3">
     <div class="col-auto">
@@ -42,20 +45,37 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@item.Nombre</td>
-            <td>@item.Descripcion</td>
-            <td>@item.Precio</td>
-            <td>@item.Stock</td>
-            <td>@item.Activo</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Nombre</td>
+                <td>@item.Descripcion</td>
+                <td>@item.Precio</td>
+                <td>@item.Stock</td>
+                <td>@item.Activo</td>
+                <td>
+                    @if (item.Activo && item.Stock > 0)
+                    {
+                        <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
+                            <input type="hidden" name="productoId" value="@item.Id" />
+                            <input type="hidden" name="cantidad" value="1" />
+                            <button type="submit" class="btn btn-sm btn-danger">Agregar al carrito</button>
+                        </form>
+                    }
+
+                    @if (User.IsInRole("Administrador") ||
+    (User.IsInRole("Vendedor") &&
+     User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == item.VendedorId.ToString()))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                        @: |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                    }
+
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
