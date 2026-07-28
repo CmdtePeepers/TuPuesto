@@ -1,0 +1,177 @@
+﻿
+:root {
+    --rojo: #E8283F;
+    --rojo-oscuro: #A8172A;
+    --rojo-profundo: #6E0F1D;
+    --naranja: #FF8A3D;
+    --amarillo: #FFC93C;
+    --crema: #FFF7F2;
+    --gris-texto: #4a4a4a;
+}
+
+.tt-hero {
+    background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo-oscuro) 55%, var(--rojo-profundo) 100%);
+    color: #fff;
+    border-radius: 12px;
+    padding: 2.5rem 3rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+    .tt-hero::after {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 260px;
+        height: 260px;
+        background: radial-gradient(circle, rgba(255,201,60,0.25) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+.tt-badge {
+    display: inline-block;
+    background: var(--amarillo);
+    color: var(--rojo-profundo);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+}
+
+.tt-eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amarillo);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.tt-titulo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin: 0 0 0.8rem;
+    max-width: 640px;
+    position: relative;
+}
+
+.tt-subtitulo {
+    color: #FFE1D6;
+    max-width: 540px;
+    line-height: 1.6;
+    margin-bottom: 1.6rem;
+    position: relative;
+}
+
+.tt-acciones {
+    position: relative;
+}
+
+    .tt-acciones a, .tt-acciones button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.92rem;
+        margin-right: 0.8rem;
+    }
+
+.tt-btn-primario {
+    background: var(--amarillo);
+    color: var(--rojo-profundo);
+    border: none;
+}
+
+    .tt-btn-primario:hover {
+        background: #ffd965;
+        color: var(--rojo-profundo);
+    }
+
+.tt-btn-secundario {
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.6);
+    cursor: pointer;
+}
+
+    .tt-btn-secundario:hover {
+        background: rgba(255,255,255,0.12);
+        color: #fff;
+    }
+
+.tt-seccion-titulo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--rojo-profundo);
+    margin-bottom: 1.2rem;
+    border-left: 4px solid var(--rojo);
+    padding-left: 0.7rem;
+}
+
+.tt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.2rem;
+}
+
+.tt-card {
+    border: 1px solid #f0e2dc;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+    .tt-card:hover {
+        box-shadow: 0 6px 18px rgba(232, 40, 63, 0.15);
+        transform: translateY(-2px);
+    }
+
+.tt-card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background: var(--crema);
+}
+
+.tt-card-body {
+    padding: 0.9rem 1rem;
+}
+
+.tt-card-categoria {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--rojo);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.tt-card-nombre {
+    font-weight: 600;
+    color: #2b2b2b;
+    margin-bottom: 0.3rem;
+}
+
+.tt-card-precio {
+    font-weight: 800;
+    color: var(--rojo-oscuro);
+    font-size: 1.05rem;
+}
+
+.tt-vacio {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #a68f89;
+    border: 1.5px dashed #f0d9d2;
+    border-radius: 10px;
+    background: var(--crema);
+}
+

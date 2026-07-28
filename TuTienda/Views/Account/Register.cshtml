@@ -1,0 +1,91 @@
+@model TuTienda.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Crear cuenta";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crear cuenta - TuTienda</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="~/css/register.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="layout">
+        <div class="panel-marca">
+            <div>
+                <div class="marca-badge">🔥 Miles de ofertas todos los días</div>
+                <div class="marca-brand">TuTienda</div>
+                <div class="marca-tagline">Crea tu cuenta y empieza a comprar a cientos de vendedores de todos los rubros.</div>
+                <ul class="marca-lista">
+                    <li>Moda, tecnología, hogar y mucho más</li>
+                    <li>Compra directo a vendedores verificados</li>
+                    <li>Rastrea tus pedidos fácilmente</li>
+                </ul>
+            </div>
+            <div class="marca-footer">Compra directo. Vende sin límites.</div>
+        </div>
+
+        <div class="panel-form">
+            <div class="form-card">
+                <div class="form-eyebrow">Únete gratis</div>
+                <h1 class="form-titulo">Crear cuenta</h1>
+
+                <form asp-action="Register" method="post" novalidate>
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                    <div class="campo-fila">
+                        <div class="campo">
+                            <label asp-for="Nombres">Nombres</label>
+                            <input asp-for="Nombres" placeholder="Erika" autocomplete="given-name" />
+                            <span asp-validation-for="Nombres" class="text-danger"></span>
+                        </div>
+                        <div class="campo">
+                            <label asp-for="Apellidos">Apellidos</label>
+                            <input asp-for="Apellidos" placeholder="Mendoza" autocomplete="family-name" />
+                            <span asp-validation-for="Apellidos" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label asp-for="Email">Correo electrónico</label>
+                        <input asp-for="Email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="campo">
+                        <label asp-for="Password">Contraseña</label>
+                        <input asp-for="Password" placeholder="••••••••" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="campo">
+                        <label asp-for="ConfirmPassword">Confirmar contraseña</label>
+                        <input asp-for="ConfirmPassword" placeholder="••••••••" autocomplete="new-password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn-registrar">Crear mi cuenta</button>
+                </form>
+
+                <div class="form-footer">
+                    ¿Ya tienes cuenta? <a asp-action="Login">Inicia sesión aquí</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+</body>
+</html>

@@ -1,8 +1,72 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
+
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+
+<div class="tt-hero">
+    <div class="tt-badge">🔥 Ofertas de miles de vendedores</div>
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <div class="tt-eyebrow">Bienvenido de nuevo</div>
+        <h1 class="tt-titulo">Hola, @User.Identity.Name 👋</h1>
+        <p class="tt-subtitulo">
+            @if (User.IsInRole("Vendedor"))
+            {
+                <span>Gestiona tus productos y pedidos desde tu panel de vendedor.</span>
+            }
+            else if (User.IsInRole("Administrador"))
+            {
+                <span>Tienes acceso al panel administrativo: usuarios, productos y reportes.</span>
+            }
+            else
+            {
+                <span>Sigue explorando ofertas de moda, tecnología, hogar y mucho más.</span>
+            }
+        </p>
+        <div class="tt-acciones">
+            <a class="tt-btn-primario" asp-controller="Producto" asp-action="Index">Ver productos</a>
+            <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                <button type="submit" class="tt-btn-secundario">Cerrar sesión</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="tt-eyebrow">Marketplace de todo tipo de rubros</div>
+        <h1 class="tt-titulo">Miles de productos, cientos de vendedores, todo en un solo lugar</h1>
+        <p class="tt-subtitulo">Moda, tecnología, hogar, accesorios y más — compra directo a vendedores de todo el país, todo desde TuTienda.</p>
+        <div class="tt-acciones">
+            <a class="tt-btn-primario" asp-controller="Account" asp-action="Register">Crear cuenta</a>
+            <a class="tt-btn-secundario" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+        </div>
+    }
 </div>
+
+<h2 class="tt-seccion-titulo">Productos recientes</h2>
+
+@if (!Model.Any())
+{
+    <div class="tt-vacio">
+        Aún no hay productos publicados. Cuando los vendedores empiecen a subir productos, aparecerán aquí.
+    </div>
+}
+else
+{
+    <div class="tt-grid">
+        @foreach (var producto in Model)
+        {
+            <div class="tt-card">
+                <img class="tt-card-img" src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/300x200?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
+                <div class="tt-card-body">
+                    <div class="tt-card-categoria">@(producto.Categoria?.Nombre ?? "Sin categoría")</div>
+                    <div class="tt-card-nombre">@producto.Nombre</div>
+                    <div class="tt-card-precio">S/ @producto.Precio.ToString("0.00")</div>
+                </div>
+            </div>
+        }
+    </div>
+}

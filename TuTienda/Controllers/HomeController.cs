@@ -1,14 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using TuTienda.Data;
 using TuTienda.Models;
 
 namespace TuTienda.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _context;
+
+        public HomeController(AppDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var productos = await _context.Productos
+                .Where(p => p.Activo)
+                .Include(p => p.Categoria)
+                .OrderByDescending(p => p.FechaCreacion)
+                .Take(8)
+                .ToListAsync();
+
+            return View(productos);
         }
 
         public IActionResult Privacy()
