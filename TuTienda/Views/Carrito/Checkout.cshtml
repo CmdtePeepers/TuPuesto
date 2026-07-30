@@ -1,0 +1,77 @@
+@model IEnumerable<TuTienda.Models.Entities.CarritoItem>
+
+@{
+    ViewData["Title"] = "Confirmar compra";
+    var porVendedor = Model.GroupBy(i => new { i.Producto!.VendedorId, Nombre = i.Producto?.Vendedor?.NombreTienda ?? i.Producto?.Vendedor?.Nombres ?? "Vendedor" });
+    decimal totalGeneral = Model.Sum(i => i.Cantidad * i.PrecioUnitario);
+}
+
+<style>
+    .co-vendedor {
+        border: 1px solid #f0e2dc;
+        border-radius: 10px;
+        margin-bottom: 1.2rem;
+        overflow: hidden;
+    }
+    .co-vendedor-header {
+        background: #FFF7F2;
+        padding: 0.7rem 1.2rem;
+        font-weight: 700;
+        color: #A8172A;
+        display: flex;
+        justify-content: space-between;
+    }
+    .co-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 1.2rem;
+        border-top: 1px solid #f5f5f5;
+        font-size: 0.92rem;
+    }
+    .co-total {
+        text-align: right;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #A8172A;
+        margin: 1.5rem 0;
+    }
+    .co-nota {
+        background: #FFF7F2;
+        border: 1px dashed #f0d9d2;
+        border-radius: 8px;
+        padding: 0.9rem 1.1rem;
+        font-size: 0.88rem;
+        color: #8a5c4f;
+        margin-bottom: 1.5rem;
+    }
+</style>
+
+<p><a asp-action="Index">← Volver al carrito</a></p>
+<h1>Confirmar compra</h1>
+
+<div class="co-nota">
+    💳 Esto es un <strong>pago simulado</strong> (proyecto académico) — no se procesará ningún cobro real. Se generará un pedido por cada vendedor de tu carrito.
+</div>
+
+@foreach (var grupo in porVendedor)
+{
+    <div class="co-vendedor">
+        <div class="co-vendedor-header">
+            <span>Vendido por: @grupo.Key.Nombre</span>
+            <span>S/ @grupo.Sum(i => i.Cantidad * i.PrecioUnitario).ToString("0.00")</span>
+        </div>
+        @foreach (var item in grupo)
+        {
+            <div class="co-item">
+                <span>@item.Producto?.Nombre × @item.Cantidad</span>
+                <span>S/ @((item.Cantidad * item.PrecioUnitario).ToString("0.00"))</span>
+            </div>
+        }
+    </div>
+}
+
+<div class="co-total">Total a pagar: S/ @totalGeneral.ToString("0.00")</div>
+
+<form asp-action="ConfirmarPago" method="post">
+    <button type="submit" class="btn btn-danger btn-lg">Confirmar y pagar (simulado)</button>
+</form>

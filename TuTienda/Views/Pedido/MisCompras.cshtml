@@ -1,0 +1,81 @@
+@model IEnumerable<TuTienda.Models.Entities.Pedido>
+
+@{
+    ViewData["Title"] = "Mis compras";
+    var porCompra = Model.GroupBy(p => p.GrupoCompraId).OrderByDescending(g => g.First().FechaPedido);
+}
+
+<style>
+    .mc-compra {
+        border: 1px solid #f0e2dc;
+        border-radius: 10px;
+        margin-bottom: 1.4rem;
+        overflow: hidden;
+    }
+    .mc-compra-fecha {
+        background: #f7f4ee;
+        padding: 0.5rem 1.1rem;
+        font-size: 0.82rem;
+        color: #6b6656;
+    }
+    .mc-pedido-header {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.7rem 1.1rem;
+        font-weight: 700;
+        color: #A8172A;
+        border-top: 1px solid #f0e2dc;
+    }
+    .mc-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.4rem 1.1rem;
+        font-size: 0.88rem;
+        color: #4a4a4a;
+    }
+    .badge-estado {
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    .badge-Pendiente { background: #FFF3CD; color: #8a6d00; }
+    .badge-Confirmado { background: #D4EDFF; color: #084298; }
+    .badge-Entregado { background: #D4F7DC; color: #146c2e; }
+    .badge-Cancelado { background: #FFE0E0; color: #A8172A; }
+</style>
+
+<h1>Mis compras</h1>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">
+        Aún no has hecho ninguna compra. <a asp-controller="Producto" asp-action="Index">Ver productos</a>
+    </div>
+}
+else
+{
+    @foreach (var compra in porCompra)
+    {
+        <div class="mc-compra">
+            <div class="mc-compra-fecha">Compra del @compra.First().FechaPedido.ToString("dd/MM/yyyy HH:mm")</div>
+            @foreach (var pedido in compra)
+            {
+                <div class="mc-pedido-header">
+                    <span>Pedido #@pedido.Id — @(pedido.Vendedor?.NombreTienda ?? pedido.Vendedor?.Nombres)</span>
+                    <span>
+                        <span class="badge-estado badge-@pedido.Estado">@pedido.Estado</span>
+                        &nbsp; S/ @pedido.Total.ToString("0.00")
+                    </span>
+                </div>
+                @foreach (var detalle in pedido.Detalles)
+                {
+                    <div class="mc-item">
+                        <span>@detalle.Producto?.Nombre × @detalle.Cantidad</span>
+                        <span>S/ @detalle.Subtotal.ToString("0.00")</span>
+                    </div>
+                }
+            }
+        </div>
+    }
+}

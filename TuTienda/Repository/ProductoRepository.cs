@@ -37,6 +37,7 @@ namespace TuTienda.Repository
         public async Task<(List<Producto> productos, int totalRegistros)> ObtenerProductosPaginados(
             string nombre,
             decimal precioMin,
+            int categoriaId,
             int paginaActual,
             int elementosPorPagina
         )
@@ -51,6 +52,7 @@ namespace TuTienda.Repository
                 cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@nombre", nombre ?? "");
                 cmd.Parameters.AddWithValue("@precioMin", precioMin);
+                cmd.Parameters.AddWithValue("@categoriaId", categoriaId);
                 cmd.Parameters.AddWithValue("@paginaActual", paginaActual);
                 cmd.Parameters.AddWithValue("@elementosPorPagina", elementosPorPagina);
 

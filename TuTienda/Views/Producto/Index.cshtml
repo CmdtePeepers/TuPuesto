@@ -1,10 +1,12 @@
-@model IEnumerable<TuTienda.Models.Entities.Producto>
+@model IEnumerable<TuTienda.Models.ViewModels.CategoriaConProductos>
 
 @{
     ViewData["Title"] = "Productos";
-    int paginaActual = ViewBag.PaginaActual;
-    int totalPaginas = ViewBag.TotalPaginas;
-    int elementosPorPagina = ViewBag.ElementosPorPagina;
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/indexPro.css" asp-append-version="true" />
 }
 
 <h1>Productos</h1>
@@ -16,85 +18,53 @@
 
 @if (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))
 {
-    <p>
-        <a asp-action="Create">Crear nuevo</a>
-    </p>
+    <p><a asp-action="Create">+ Crear nuevo producto</a></p>
 }
 
-<form asp-action="ObtenerProductos" method="get" class="row g-2 mb-3">
-    <div class="col-auto">
-        <input type="text" name="nombre" value="@ViewBag.Nombre" class="form-control" placeholder="Buscar por nombre" />
-    </div>
-    <div class="col-auto">
-        <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" class="form-control" placeholder="Precio mínimo" />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-secondary">Buscar</button>
-    </div>
+<form asp-action="Buscar" method="get" class="prod-buscador">
+    <input type="text" name="nombre" placeholder="Busca lo que necesites: ropa, laptops, comida..." />
+    <button type="submit">Buscar</button>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Activo</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Nombre</td>
-                <td>@item.Descripcion</td>
-                <td>@item.Precio</td>
-                <td>@item.Stock</td>
-                <td>@item.Activo</td>
-                <td>
-                    @if (item.Activo && item.Stock > 0)
-                    {
-                        <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
-                            <input type="hidden" name="productoId" value="@item.Id" />
-                            <input type="hidden" name="cantidad" value="1" />
-                            <button type="submit" class="btn btn-sm btn-danger">Agregar al carrito</button>
-                        </form>
-                    }
-
-                    @if (User.IsInRole("Administrador") ||
-    (User.IsInRole("Vendedor") &&
-     User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value == item.VendedorId.ToString()))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                        @: |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                    }
-
-                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-@if (totalPaginas > 1)
+@if (!Model.Any())
 {
-    <nav>
-        <ul class="pagination">
-            @for (int i = 1; i <= totalPaginas; i++)
-            {
-                <li class="page-item @(i == paginaActual ? "active" : "")">
-                    <a class="page-link"
-                       asp-action="ObtenerProductos"
-                       asp-route-nombre="@ViewBag.Nombre"
-                       asp-route-precioMin="@ViewBag.PrecioMin"
-                       asp-route-paginaActual="@i"
-                       asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
-                </li>
-            }
-        </ul>
-    </nav>
-    <p>Total de productos: @ViewBag.TotalRegistros</p>
+    <div class="alert alert-light border">Aún no hay productos publicados en ninguna categoría.</div>
+}
+else
+{
+    @foreach (var seccion in Model)
+    {
+        <div class="cat-seccion">
+            <div class="cat-header">
+                <h2 class="cat-titulo">@seccion.Categoria.Nombre</h2>
+                <a class="cat-vertodos" asp-action="Categoria" asp-route-id="@seccion.Categoria.Id">Ver todos →</a>
+            </div>
+            <div class="prod-grid">
+                @foreach (var producto in seccion.Productos)
+                {
+                    <div class="prod-card">
+                        <a asp-action="Details" asp-route-id="@producto.Id" style="text-decoration:none; color:inherit;">
+                            <img src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/200x140?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
+                        </a>
+                        <div class="prod-card-body">
+                            <div class="prod-card-nombre">@producto.Nombre</div>
+                            <div class="prod-card-precio">S/ @producto.Precio.ToString("0.00")</div>
+                            @if (producto.Stock > 0)
+                            {
+                                <form asp-controller="Carrito" asp-action="Agregar" method="post">
+                                    <input type="hidden" name="productoId" value="@producto.Id" />
+                                    <input type="hidden" name="cantidad" value="1" />
+                                    <button type="submit" class="prod-card-btn">Agregar al carrito</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted" style="font-size:0.8rem;">Sin stock</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 }

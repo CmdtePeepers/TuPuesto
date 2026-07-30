@@ -1,0 +1,111 @@
+﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = ViewBag.Titulo;
+    int paginaActual = ViewBag.PaginaActual;
+    int totalPaginas = ViewBag.TotalPaginas;
+    int elementosPorPagina = ViewBag.ElementosPorPagina;
+    int categoriaId = ViewBag.CategoriaId;
+
+    string? usuarioIdActual = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    bool esAdmin = User.IsInRole("Administrador");
+    bool esVendedor = User.IsInRole("Vendedor");
+}
+
+<p><a asp-action="Index">← Volver a Productos</a></p>
+
+<h1>@ViewBag.Titulo</h1>
+
+<form asp-action="@(categoriaId > 0 ? "Categoria" : "Buscar")" method="get" class="row g-2 mb-3">
+    @if (categoriaId > 0)
+    {
+        <input type="hidden" name="id" value="@categoriaId" />
+    }
+    <div class="col-auto">
+        <input type="text" name="nombre" value="@ViewBag.Nombre" class="form-control" placeholder="Buscar por nombre" />
+    </div>
+    <div class="col-auto">
+        <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" class="form-control" placeholder="Precio mínimo" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Filtrar</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">No se encontraron productos.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                bool puedeGestionar = esAdmin || (esVendedor && usuarioIdActual == item.VendedorId.ToString());
+                bool hayStock = item.Activo && item.Stock > 0;
+
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.Descripcion</td>
+                    <td>S/ @item.Precio.ToString("0.00")</td>
+                    <td>@item.Stock</td>
+                    <td>
+                        @if (hayStock)
+                        {
+                            <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
+                                <input type="hidden" name="productoId" value="@item.Id" />
+                                <input type="hidden" name="cantidad" value="1" />
+                                <button type="submit" class="btn btn-sm btn-danger">Agregar al carrito</button>
+                            </form>
+                        }
+                        @if (puedeGestionar)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                            <text> | </text>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                            <text> | </text>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (totalPaginas > 1)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= totalPaginas; i++)
+                {
+                    <li class="page-item @(i == paginaActual ? "active" : "")">
+                        @if (categoriaId > 0)
+                        {
+                            <a class="page-link" asp-action="Categoria" asp-route-id="@categoriaId"
+                               asp-route-nombre="@ViewBag.Nombre" asp-route-precioMin="@ViewBag.PrecioMin"
+                               asp-route-paginaActual="@i" asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
+                        }
+                        else
+                        {
+                            <a class="page-link" asp-action="Buscar"
+                               asp-route-nombre="@ViewBag.Nombre" asp-route-precioMin="@ViewBag.PrecioMin"
+                               asp-route-paginaActual="@i" asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
+                        }
+                    </li>
+                }
+            </ul>
+        </nav>
+        <p>Total de productos: @ViewBag.TotalRegistros</p>
+    }
+}

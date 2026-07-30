@@ -1,0 +1,90 @@
+@model IEnumerable<TuTienda.Models.Entities.Pedido>
+@using TuTienda.Models.Enums
+
+@{
+    ViewData["Title"] = "Gestionar pedidos";
+
+    Dictionary<EstadoPedido, EstadoPedido[]> transiciones = new()
+    {
+        [EstadoPedido.Pendiente] = new[] { EstadoPedido.Confirmado, EstadoPedido.Cancelado },
+        [EstadoPedido.Confirmado] = new[] { EstadoPedido.Entregado, EstadoPedido.Cancelado },
+        [EstadoPedido.Entregado] = Array.Empty<EstadoPedido>(),
+        [EstadoPedido.Cancelado] = Array.Empty<EstadoPedido>(),
+    };
+}
+
+<style>
+    .badge-estado {
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+    .badge-Pendiente { background: #FFF3CD; color: #8a6d00; }
+    .badge-Confirmado { background: #D4EDFF; color: #084298; }
+    .badge-Entregado { background: #D4F7DC; color: #146c2e; }
+    .badge-Cancelado { background: #FFE0E0; color: #A8172A; }
+</style>
+
+<h1>Gestionar pedidos</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">No tienes pedidos recibidos todavía.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Cambiar estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pedido in Model)
+            {
+                var siguientes = transiciones[pedido.Estado];
+                <tr>
+                    <td>#@pedido.Id</td>
+                    <td>@pedido.Cliente?.Nombres @pedido.Cliente?.Apellidos</td>
+                    <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>S/ @pedido.Total.ToString("0.00")</td>
+                    <td><span class="badge-estado badge-@pedido.Estado">@pedido.Estado</span></td>
+                    <td>
+                        @if (siguientes.Length > 0)
+                        {
+                            <form asp-action="CambiarEstado" method="post" class="d-flex gap-2">
+                                <input type="hidden" name="id" value="@pedido.Id" />
+                                <select name="nuevoEstado" class="form-select form-select-sm" style="width:auto;">
+                                    @foreach (var estado in siguientes)
+                                    {
+                                        <option value="@estado">@estado</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-danger">Actualizar</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="text-muted">— sin cambios posibles —</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

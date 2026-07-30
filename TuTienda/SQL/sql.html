@@ -1,18 +1,14 @@
-﻿USE TuTienda;
+﻿
+USE TuTienda;
 GO
 
-/* ============================================================
-   TABLA: Roles
-   ============================================================ */
+/* TABLAS */
 CREATE TABLE Roles (
     Id      INT IDENTITY(1,1) PRIMARY KEY,
     Nombre  NVARCHAR(50) NOT NULL
 );
 GO
 
-/* ============================================================
-   TABLA: Usuarios
-   ============================================================ */
 CREATE TABLE Usuarios (
     Id                  INT IDENTITY(1,1) PRIMARY KEY,
     Nombres             NVARCHAR(100)   NOT NULL,
@@ -32,9 +28,6 @@ GO
 CREATE UNIQUE INDEX IX_Usuarios_Email ON Usuarios(Email);
 GO
 
-/* ============================================================
-   TABLA: Categorias
-   ============================================================ */
 CREATE TABLE Categorias (
     Id           INT IDENTITY(1,1) PRIMARY KEY,
     Nombre       NVARCHAR(100)  NOT NULL,
@@ -42,9 +35,6 @@ CREATE TABLE Categorias (
 );
 GO
 
-/* ============================================================
-   TABLA: Productos
-   ============================================================ */
 CREATE TABLE Productos (
     Id             INT IDENTITY(1,1) PRIMARY KEY,
     Nombre         NVARCHAR(150)   NOT NULL,
@@ -62,9 +52,6 @@ CREATE TABLE Productos (
 );
 GO
 
-/* ============================================================
-   TABLA: Carritos
-   ============================================================ */
 CREATE TABLE Carritos (
     Id             INT IDENTITY(1,1) PRIMARY KEY,
     UsuarioId      INT           NULL,
@@ -75,9 +62,6 @@ CREATE TABLE Carritos (
 );
 GO
 
-/* ============================================================
-   TABLA: CarritoItems
-   ============================================================ */
 CREATE TABLE CarritoItems (
     Id              INT IDENTITY(1,1) PRIMARY KEY,
     CarritoId       INT           NOT NULL,
@@ -90,9 +74,6 @@ CREATE TABLE CarritoItems (
 );
 GO
 
-/* ============================================================
-   TABLA: Pedidos
-   ============================================================ */
 CREATE TABLE Pedidos (
     Id                    INT IDENTITY(1,1) PRIMARY KEY,
     GrupoCompraId         UNIQUEIDENTIFIER NOT NULL,
@@ -108,9 +89,6 @@ CREATE TABLE Pedidos (
 );
 GO
 
-/* ============================================================
-   TABLA: DetallesPedido
-   ============================================================ */
 CREATE TABLE DetallesPedido (
     Id              INT IDENTITY(1,1) PRIMARY KEY,
     PedidoId        INT           NOT NULL,
@@ -124,23 +102,9 @@ CREATE TABLE DetallesPedido (
 );
 GO
 
-/* ============================================================
-   SEED: Roles iniciales (Administrador, Vendedor, Cliente)
-   ============================================================ */
-SET IDENTITY_INSERT Roles ON;
-INSERT INTO Roles (Id, Nombre) VALUES
-    (1, 'Administrador'),
-    (2, 'Vendedor'),
-    (3, 'Cliente');
-SET IDENTITY_INSERT Roles OFF;
-GO
+/* STORED PROCEDURES*/
 
-/* ============================================================
-   CREATE PROCEDURES
- ============================================================ */
-USE TuTienda;
-GO
-
+-- Filtro + paginación de productos (catálogo y búsqueda)
 CREATE OR ALTER PROCEDURE dbo.sp_FiltrarProductosPaginados
     @nombre             NVARCHAR(150)  = '',
     @precioMin          DECIMAL(10,2)  = 0,
@@ -174,9 +138,103 @@ BEGIN
 END
 GO
 
-/* ============================================================
-   CATEGORIAS
-   ============================================================ */
+-- Reporte 1: Ventas por período (agrupado por día)
+CREATE OR ALTER PROCEDURE dbo.sp_ReporteVentasPorPeriodo
+    @fechaInicio DATE,
+    @fechaFin DATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        CAST(p.FechaPedido AS DATE) AS Fecha,
+        COUNT(DISTINCT p.Id) AS CantidadPedidos,
+        SUM(p.Total) AS Total
+    FROM Pedidos p
+    WHERE CAST(p.FechaPedido AS DATE) BETWEEN @fechaInicio AND @fechaFin
+      AND p.Estado <> 3
+    GROUP BY CAST(p.FechaPedido AS DATE)
+    ORDER BY Fecha;
+END
+GO
+
+-- Reporte 2: Productos más vendidos
+CREATE OR ALTER PROCEDURE dbo.sp_ReporteProductosMasVendidos
+    @fechaInicio DATE = NULL,
+    @fechaFin    DATE = NULL,
+    @topN        INT  = 10
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT TOP (@topN)
+        pr.Id AS ProductoId,
+        pr.Nombre,
+        SUM(dp.Cantidad) AS CantidadVendida,
+        SUM(dp.Subtotal) AS Ingresos
+    FROM DetallesPedido dp
+    INNER JOIN Pedidos pe  ON pe.Id = dp.PedidoId
+    INNER JOIN Productos pr ON pr.Id = dp.ProductoId
+    WHERE pe.Estado <> 3
+      AND (@fechaInicio IS NULL OR CAST(pe.FechaPedido AS DATE) >= @fechaInicio)
+      AND (@fechaFin    IS NULL OR CAST(pe.FechaPedido AS DATE) <= @fechaFin)
+    GROUP BY pr.Id, pr.Nombre
+    ORDER BY CantidadVendida DESC;
+END
+GO
+
+-- Reporte 3: Ingresos por vendedor
+CREATE OR ALTER PROCEDURE dbo.sp_ReporteIngresosPorVendedor
+    @fechaInicio DATE = NULL,
+    @fechaFin    DATE = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        u.Id AS VendedorId,
+        COALESCE(u.NombreTienda, u.Nombres + ' ' + u.Apellidos) AS NombreVendedor,
+        COUNT(DISTINCT p.Id) AS CantidadPedidos,
+        SUM(p.Total) AS Total
+    FROM Pedidos p
+    INNER JOIN Usuarios u ON u.Id = p.VendedorId
+    WHERE p.Estado <> 3
+      AND (@fechaInicio IS NULL OR CAST(p.FechaPedido AS DATE) >= @fechaInicio)
+      AND (@fechaFin    IS NULL OR CAST(p.FechaPedido AS DATE) <= @fechaFin)
+    GROUP BY u.Id, u.NombreTienda, u.Nombres, u.Apellidos
+    ORDER BY Total DESC;
+END
+GO
+
+-- Reporte 4: Comparación de ventas mes a mes
+CREATE OR ALTER PROCEDURE dbo.sp_ReporteComparacionMensual
+    @anio INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        MONTH(p.FechaPedido) AS Mes,
+        COUNT(DISTINCT p.Id) AS CantidadPedidos,
+        SUM(p.Total) AS Total
+    FROM Pedidos p
+    WHERE YEAR(p.FechaPedido) = @anio
+      AND p.Estado <> 3
+    GROUP BY MONTH(p.FechaPedido)
+    ORDER BY Mes;
+END
+GO
+
+/*  SEED: Roles */
+SET IDENTITY_INSERT Roles ON;
+INSERT INTO Roles (Id, Nombre) VALUES
+    (1, 'Administrador'),
+    (2, 'Vendedor'),
+    (3, 'Cliente');
+SET IDENTITY_INSERT Roles OFF;
+GO
+
+/* SEED: Categorías */
 INSERT INTO Categorias (Nombre, Descripcion)
 VALUES
 ('Tecnología', 'Celulares, laptops y accesorios'),
@@ -186,125 +244,49 @@ VALUES
 ('Libros', 'Libros y material educativo');
 GO
 
-/* ============================================================
-   USUARIOS
-   ============================================================ */
+/* SEED: Usuarios
+   Contraseña para TODOS: 123456*/
+DECLARE @HashPrueba NVARCHAR(MAX) = 'AQAAAAEAAYagAAAAEEQ5qrTbtE0kmqndA6IQJwgKHKhIMD9GH1BqE7/BZxgrbl9EP+SeJv6nnDzTYrCxyQ==';
 
 -- Administrador
-INSERT INTO Usuarios
-(Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
-VALUES
-('Juan', 'Administrador', 'admin@tutienda.com', '123456', 1, NULL, NULL);
+INSERT INTO Usuarios (Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
+VALUES ('Juan', 'Administrador', 'admin@tutienda.com', @HashPrueba, 1, NULL, NULL);
 
 -- Vendedores (RolId = 2)
-INSERT INTO Usuarios
-(Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
+INSERT INTO Usuarios (Nombres, Apellidos, Email, PasswordHash, RolId, NombreTienda, DescripcionTienda)
 VALUES
-('Carlos', 'Ramirez', 'carlos@tutienda.com', '123456', 2,
- 'Tech Store', 'Venta de productos tecnológicos'),
-
-('María', 'Lopez', 'maria@tutienda.com', '123456', 2,
- 'Moda Express', 'Ropa y accesorios'),
-
-('Luis', 'Torres', 'luis@tutienda.com', '123456', 2,
- 'Casa Fácil', 'Todo para el hogar');
+('Carlos', 'Ramirez', 'carlos@tutienda.com', @HashPrueba, 2, 'Tech Store', 'Venta de productos tecnológicos'),
+('María',  'Lopez',   'maria@tutienda.com',  @HashPrueba, 2, 'Moda Express', 'Ropa y accesorios'),
+('Luis',   'Torres',  'luis@tutienda.com',   @HashPrueba, 2, 'Casa Fácil', 'Todo para el hogar');
 
 -- Clientes (RolId = 3)
-INSERT INTO Usuarios
-(Nombres, Apellidos, Email, PasswordHash, RolId)
+INSERT INTO Usuarios (Nombres, Apellidos, Email, PasswordHash, RolId)
 VALUES
-('Pedro', 'Gomez', 'pedro@gmail.com', '123456', 3),
-
-('Ana', 'Perez', 'ana@gmail.com', '123456', 3),
-
-('José', 'Martinez', 'jose@gmail.com', '123456', 3);
+('Pedro', 'Gomez',    'pedro@gmail.com', @HashPrueba, 3),
+('Ana',   'Perez',    'ana@gmail.com',   @HashPrueba, 3),
+('José',  'Martinez', 'jose@gmail.com',  @HashPrueba, 3);
 GO
 
-/* ============================================================
-   PRODUCTOS
-   ============================================================ */
+/* SEED: Productos*/
 
 -- Carlos (Id = 2) -> Tecnología (CategoriaId = 1)
-INSERT INTO Productos
-(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
 VALUES
-('Laptop Lenovo IdeaPad',
- 'Laptop Ryzen 5, 16GB RAM, SSD 512GB',
- 2499.90,
- 12,
- '/img/productos/laptop.jpg',
- 1,
- 2),
-
-('Mouse Logitech M170',
- 'Mouse inalámbrico',
- 59.90,
- 40,
- '/img/productos/mouse.jpg',
- 1,
- 2),
-
-('Teclado Mecánico Redragon',
- 'Teclado RGB Switch Blue',
- 189.90,
- 18,
- '/img/productos/teclado.jpg',
- 1,
- 2);
+('Laptop Lenovo IdeaPad', 'Laptop Ryzen 5, 16GB RAM, SSD 512GB', 2499.90, 12, '/img/productos/laptop.jpg', 1, 2),
+('Mouse Logitech M170',   'Mouse inalámbrico',                   59.90,   40, '/img/productos/mouse.jpg',  1, 2),
+('Teclado Mecánico Redragon', 'Teclado RGB Switch Blue',        189.90,  18, '/img/productos/teclado.jpg', 1, 2);
 
 -- María (Id = 3) -> Ropa (CategoriaId = 2)
-INSERT INTO Productos
-(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
 VALUES
-('Polo Básico Blanco',
- 'Algodón 100%',
- 39.90,
- 60,
- '/img/productos/polo.jpg',
- 2,
- 3),
-
-('Casaca Jeans',
- 'Casaca de mezclilla',
- 129.90,
- 20,
- '/img/productos/casaca.jpg',
- 2,
- 3),
-
-('Zapatillas Urbanas',
- 'Color negro',
- 159.90,
- 15,
- '/img/productos/zapatillas.jpg',
- 2,
- 3);
+('Polo Básico Blanco',  'Algodón 100%',        39.90,  60, '/img/productos/polo.jpg',      2, 3),
+('Casaca Jeans',        'Casaca de mezclilla', 129.90, 20, '/img/productos/casaca.jpg',    2, 3),
+('Zapatillas Urbanas',  'Color negro',         159.90, 15, '/img/productos/zapatillas.jpg',2, 3);
 
 -- Luis (Id = 4) -> Hogar (CategoriaId = 3)
-INSERT INTO Productos
-(Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
 VALUES
-('Juego de Ollas',
- 'Acero inoxidable',
- 299.90,
- 10,
- '/img/productos/ollas.jpg',
- 3,
- 4),
-
-('Licuadora Oster',
- '600W, vaso de vidrio',
- 249.90,
- 8,
- '/img/productos/licuadora.jpg',
- 3,
- 4),
-
-('Silla Ergonómica',
- 'Ideal para oficina',
- 449.90,
- 5,
- '/img/productos/silla.jpg',
- 3,
- 4);
+('Juego de Ollas',      'Acero inoxidable',       299.90, 10, '/img/productos/ollas.jpg',      3, 4),
+('Licuadora Oster',     '600W, vaso de vidrio',   249.90, 8,  '/img/productos/licuadora.jpg',  3, 4),
+('Silla Ergonómica',    'Ideal para oficina',     449.90, 5,  '/img/productos/silla.jpg',      3, 4);
 GO
