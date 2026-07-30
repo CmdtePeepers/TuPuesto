@@ -1,0 +1,54 @@
+@model List<TuTienda.Models.ViewModels.VentaPorMesVM>
+
+@{
+    ViewData["Title"] = "Comparación mensual";
+    decimal totalAnio = Model.Sum(m => m.Total);
+    decimal? mejorMesTotal = Model.Any() ? Model.Max(m => m.Total) : null;
+}
+
+<p><a asp-action="Index">← Volver a Reportes</a></p>
+<h1>Comparación de ventas mes a mes</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">Año</label>
+        <input type="number" name="anio" value="@ViewBag.Anio" class="form-control" style="width:120px;" />
+    </div>
+    <div class="col-auto d-flex align-items-end">
+        <button type="submit" class="btn btn-danger">Ver año</button>
+    </div>
+</form>
+
+<div class="alert alert-light border">
+    <strong>Total del año @ViewBag.Anio:</strong> S/ @totalAnio.ToString("0.00")
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">No hay ventas registradas en @ViewBag.Anio.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mes</th>
+                <th>Cantidad de pedidos</th>
+                <th>Total vendido</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fila in Model)
+            {
+                bool esMejorMes = mejorMesTotal.HasValue && fila.Total == mejorMesTotal.Value;
+                <tr class="@(esMejorMes ? "table-success" : "")">
+                    <td style="text-transform:capitalize;">@fila.NombreMes</td>
+                    <td>@fila.CantidadPedidos</td>
+                    <td>S/ @fila.Total.ToString("0.00")</td>
+                    <td>@(esMejorMes ? "🏆 Mejor mes" : "")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

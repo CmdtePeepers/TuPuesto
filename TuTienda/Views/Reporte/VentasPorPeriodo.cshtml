@@ -1,0 +1,54 @@
+@model List<TuTienda.Models.ViewModels.VentaPorDiaVM>
+
+@{
+    ViewData["Title"] = "Ventas por período";
+}
+
+<p><a asp-action="Index">← Volver a Reportes</a></p>
+<h1>Ventas por período</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">Desde</label>
+        <input type="date" name="fechaInicio" value="@ViewBag.FechaInicio" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Hasta</label>
+        <input type="date" name="fechaFin" value="@ViewBag.FechaFin" class="form-control" />
+    </div>
+    <div class="col-auto d-flex align-items-end">
+        <button type="submit" class="btn btn-danger">Filtrar</button>
+    </div>
+</form>
+
+<div class="alert alert-light border">
+    <strong>Total del período:</strong> S/ @(((decimal)ViewBag.TotalGeneral).ToString("0.00"))
+    &nbsp;|&nbsp; <strong>Pedidos:</strong> @ViewBag.TotalPedidos
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">No hay ventas en este período.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Cantidad de pedidos</th>
+                <th>Total vendido</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fila in Model)
+            {
+                <tr>
+                    <td>@fila.Fecha.ToString("dd/MM/yyyy")</td>
+                    <td>@fila.CantidadPedidos</td>
+                    <td>S/ @fila.Total.ToString("0.00")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,57 @@
+@model List<TuTienda.Models.ViewModels.ProductoMasVendidoVM>
+
+@{
+    ViewData["Title"] = "Productos más vendidos";
+}
+
+<p><a asp-action="Index">← Volver a Reportes</a></p>
+<h1>Productos más vendidos</h1>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <label class="form-label">Desde</label>
+        <input type="date" name="fechaInicio" value="@ViewBag.FechaInicio" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Hasta</label>
+        <input type="date" name="fechaFin" value="@ViewBag.FechaFin" class="form-control" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">Top</label>
+        <input type="number" name="topN" value="@ViewBag.TopN" min="1" max="50" class="form-control" />
+    </div>
+    <div class="col-auto d-flex align-items-end">
+        <button type="submit" class="btn btn-danger">Filtrar</button>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">No hay ventas registradas en este período.</div>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Producto</th>
+                <th>Cantidad vendida</th>
+                <th>Ingresos generados</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int puesto = 1; }
+            @foreach (var fila in Model)
+            {
+                <tr>
+                    <td>@puesto</td>
+                    <td>@fila.Nombre</td>
+                    <td>@fila.CantidadVendida</td>
+                    <td>S/ @fila.Ingresos.ToString("0.00")</td>
+                </tr>
+                puesto++;
+            }
+        </tbody>
+    </table>
+}
