@@ -2,89 +2,81 @@
 
 @{
     ViewData["Title"] = "Detalles del Producto";
+    bool hayStock = Model.Stock > 0 && Model.Activo;
 }
 
-<style>
-    .btn-mensaje-flotante {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 58px;
-        height: 58px;
-        border-radius: 50%;
-        background: #25D366;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-        z-index: 1000;
-        transition: transform 0.15s ease;
-    }
+@section Styles {
+    <link rel="stylesheet" href="~/css/detailsPro.css" asp-append-version="true" />
+}
 
-        .btn-mensaje-flotante:hover {
-            transform: scale(1.08);
+<a class="dp-volver" asp-action="Index">← Volver a Productos</a>
+
+<div class="dp-layout">
+    <div class="dp-imagen-wrap">
+        @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+        {
+            <img src="@Model.ImagenUrl" alt="@Model.Nombre" />
+        }
+        else
+        {
+            <div class="dp-imagen-vacia">Sin imagen disponible</div>
+        }
+    </div>
+
+    <div class="dp-info">
+        @if (Model.Categoria != null)
+        {
+            <span class="dp-categoria">@Model.Categoria.Nombre</span>
         }
 
-        .btn-mensaje-flotante img {
-            width: 32px;
-            height: 32px;
+        <h1 class="dp-nombre">@Model.Nombre</h1>
+
+        <div class="dp-precio">S/ @Model.Precio.ToString("0.00")</div>
+
+        @if (hayStock)
+        {
+            <span class="dp-stock dp-stock-disponible">✓ @Model.Stock unidades disponibles</span>
         }
-</style>
+        else
+        {
+            <span class="dp-stock dp-stock-agotado">✕ Sin stock</span>
+        }
 
-<h1>Detalles del Producto</h1>
+        @if (!string.IsNullOrEmpty(Model.Descripcion))
+        {
+            <p class="dp-descripcion">@Model.Descripcion</p>
+        }
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+        @if (Model.Vendedor != null)
+        {
+            <div class="dp-vendedor">
+                <div class="dp-vendedor-icono">@((Model.Vendedor.NombreTienda ?? Model.Vendedor.Nombres).Substring(0, 1).ToUpper())</div>
+                <div class="dp-vendedor-texto">
+                    <small>Vendido por</small>
+                    <strong>@(Model.Vendedor.NombreTienda ?? Model.Vendedor.Nombres)</strong>
+                </div>
+            </div>
+        }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
-        <dd class="col-sm-9">S/ @Model.Precio.ToString("0.00")</dd>
-
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Stock)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Stock)</dd>
-
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ImagenUrl)</dt>
-        <dd class="col-sm-9">
-            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+        <div class="dp-acciones">
+            @if (hayStock)
             {
-                <img src="@Model.ImagenUrl" alt="@Model.Nombre" style="max-width:220px; border-radius:8px;" />
+                <form asp-controller="Carrito" asp-action="Agregar" method="post">
+                    <input type="hidden" name="productoId" value="@Model.Id" />
+                    <input type="hidden" name="cantidad" value="1" />
+                    <button type="submit" class="dp-btn-carrito">Agregar al carrito</button>
+                </form>
             }
-        </dd>
 
-        <dt class="col-sm-3">Categoría</dt>
-        <dd class="col-sm-9">@Model.Categoria?.Nombre</dd>
-
-        <dt class="col-sm-3">Vendedor</dt>
-        <dd class="col-sm-9">@(Model.Vendedor?.NombreTienda ?? Model.Vendedor?.Nombres)</dd>
-
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
-    </dl>
+            @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente") && Model.VendedorId > 0)
+            {
+                <a asp-controller="Mensaje" asp-action="Conversacion"
+                   asp-route-id="@Model.VendedorId" asp-route-productoId="@Model.Id"
+                   class="dp-btn-contactar">
+                    <img src="~/imagenes/whatsap.png" alt="" />
+                    Contactar al vendedor
+                </a>
+            }
+        </div>
+    </div>
 </div>
-
-@if (Model.Stock > 0 && Model.Activo)
-{
-    <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
-        <input type="hidden" name="productoId" value="@Model.Id" />
-        <input type="hidden" name="cantidad" value="1" />
-        <button type="submit" class="btn btn-danger">Agregar al carrito</button>
-    </form>
-}
-
-<div>
-    <a asp-action="Index">Volver a la lista</a>
-</div>
-
-@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente") && Model.VendedorId > 0)
-{
-    <a asp-controller="Mensaje" asp-action="Conversacion"
-       asp-route-id="@Model.VendedorId" asp-route-productoId="@Model.Id"
-       class="btn-mensaje-flotante" title="Contactar al vendedor">
-        <img src="~/imagenes/whatsap.png" alt="Contactar" />
-    </a>
-}

@@ -1,0 +1,46 @@
+@model int
+
+<a href="/Mensaje" class="mensajes-flotante" title="Mis mensajes">
+    <img src="~/imagenes/whatsap.png" alt="Mensajes" />
+    @if (Model > 0)
+    {
+        <span class="mensajes-badge">@(Model > 9 ? "9+" : Model.ToString())</span>
+    }
+</a>
+
+<style>
+    .mensajes-flotante {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #25D366;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+        z-index: 1000;
+        transition: transform 0.15s ease;
+    }
+    .mensajes-flotante:hover { transform: scale(1.08); }
+    .mensajes-flotante img { width: 30px; height: 30px; }
+    .mensajes-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #E8283F;
+        color: #fff;
+        border-radius: 50%;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 3px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #fff;
+    }
+</style>

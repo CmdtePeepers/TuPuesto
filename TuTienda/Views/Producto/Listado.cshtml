@@ -13,80 +13,85 @@
     bool esVendedor = User.IsInRole("Vendedor");
 }
 
-<p><a asp-action="Index">← Volver a Productos</a></p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/listPro.css" asp-append-version="true" />
+}
 
-<h1>@ViewBag.Titulo</h1>
+<a class="lp-volver" asp-action="Index">← Volver a Productos</a>
+<h1 class="lp-titulo">@ViewBag.Titulo</h1>
 
-<form asp-action="@(categoriaId > 0 ? "Categoria" : "Buscar")" method="get" class="row g-2 mb-3">
+<form asp-action="@(categoriaId > 0 ? "Categoria" : "Buscar")" method="get" class="lp-filtro">
     @if (categoriaId > 0)
     {
         <input type="hidden" name="id" value="@categoriaId" />
     }
-    <div class="col-auto">
-        <input type="text" name="nombre" value="@ViewBag.Nombre" class="form-control" placeholder="Buscar por nombre" />
-    </div>
-    <div class="col-auto">
-        <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" class="form-control" placeholder="Precio mínimo" />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-secondary">Filtrar</button>
-    </div>
+    <input type="text" name="nombre" value="@ViewBag.Nombre" placeholder="Buscar por nombre" />
+    <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" placeholder="Precio mínimo" />
+    <button type="submit">Filtrar</button>
 </form>
 
 @if (!Model.Any())
 {
-    <div class="alert alert-light border">No se encontraron productos.</div>
+    <div class="lp-vacio">No se encontraron productos.</div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                bool puedeGestionar = esAdmin || (esVendedor && usuarioIdActual == item.VendedorId.ToString());
-                bool hayStock = item.Activo && item.Stock > 0;
+    <div class="lp-grid">
+        @foreach (var item in Model)
+        {
+            bool puedeGestionar = esAdmin || (esVendedor && usuarioIdActual == item.VendedorId.ToString());
+            bool hayStock = item.Activo && item.Stock > 0;
 
-                <tr>
-                    <td>@item.Nombre</td>
-                    <td>@item.Descripcion</td>
-                    <td>S/ @item.Precio.ToString("0.00")</td>
-                    <td>@item.Stock</td>
-                    <td>
+            <div class="lp-card">
+                <a asp-action="Details" asp-route-id="@item.Id">
+                    <img class="lp-card-img"
+                         src="@(string.IsNullOrEmpty(item.ImagenUrl) ? "https://via.placeholder.com/210x150?text=Sin+imagen" : item.ImagenUrl)"
+                         alt="@item.Nombre" />
+                </a>
+                <div class="lp-card-body">
+                    <div class="lp-card-nombre">@item.Nombre</div>
+                    @if (!string.IsNullOrEmpty(item.Descripcion))
+                    {
+                        <div class="lp-card-desc">@item.Descripcion</div>
+                    }
+                    <div class="lp-card-precio">S/ @item.Precio.ToString("0.00")</div>
+
+                    @if (hayStock)
+                    {
+                        <div class="lp-card-stock lp-stock-si">✓ Stock: @item.Stock</div>
+                    }
+                    else
+                    {
+                        <div class="lp-card-stock lp-stock-no">✕ Sin stock</div>
+                    }
+
+                    <div class="lp-card-acciones">
                         @if (hayStock)
                         {
-                            <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
+                            <form asp-controller="Carrito" asp-action="Agregar" method="post">
                                 <input type="hidden" name="productoId" value="@item.Id" />
                                 <input type="hidden" name="cantidad" value="1" />
-                                <button type="submit" class="btn btn-sm btn-danger">Agregar al carrito</button>
+                                <button type="submit" class="lp-btn-carrito">Agregar al carrito</button>
                             </form>
                         }
-                        @if (puedeGestionar)
-                        {
-                            <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                            <text> | </text>
-                            <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                            <text> | </text>
-                        }
-                        <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        <div class="lp-links-gestion">
+                            @if (puedeGestionar)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                            }
+                            <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
     @if (totalPaginas > 1)
     {
         <nav>
-            <ul class="pagination">
+            <ul class="pagination justify-content-center">
                 @for (int i = 1; i <= totalPaginas; i++)
                 {
                     <li class="page-item @(i == paginaActual ? "active" : "")">
@@ -106,6 +111,6 @@ else
                 }
             </ul>
         </nav>
-        <p>Total de productos: @ViewBag.TotalRegistros</p>
     }
+    <p class="lp-total">Total de productos: @ViewBag.TotalRegistros</p>
 }

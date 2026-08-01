@@ -41,12 +41,18 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="MisCompras">Mis compras</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Mensaje" asp-action="Index">Mensajes</a>
+                                </li>
                             }
 
                             @if (User.IsInRole("Vendedor"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="Gestionar">Pedidos recibidos</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Mensaje" asp-action="Index">Mensajes</a>
                                 </li>
                             }
 
@@ -109,6 +115,9 @@
             &copy; 2026 - TuTienda - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    @await Component.InvokeAsync("MensajesFlotante")
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
