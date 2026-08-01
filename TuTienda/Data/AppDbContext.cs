@@ -18,6 +18,7 @@ namespace TuTienda.Data
         public DbSet<CarritoItem> CarritoItems { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
         public DbSet<DetallePedido> DetallesPedido { get; set; }
+        public DbSet<Mensaje> Mensajes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +34,37 @@ namespace TuTienda.Data
                 .WithMany(u => u.PedidosComoVendedor)
                 .HasForeignKey(p => p.VendedorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mensaje>()
+               .HasOne(m => m.Cliente)
+               .WithMany()
+               .HasForeignKey(m => m.ClienteId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Vendedor)
+                .WithMany()
+                .HasForeignKey(m => m.VendedorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Emisor)
+                .WithMany()
+                .HasForeignKey(m => m.EmisorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Producto)
+                .WithMany()
+                .HasForeignKey(m => m.ProductoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Pedido)
+                .WithMany()
+                .HasForeignKey(m => m.PedidoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -1,0 +1,125 @@
+@model List<TuTienda.Models.Entities.Mensaje>
+
+@{
+    ViewData["Title"] = "Conversación";
+    int miId = ViewBag.MiId;
+}
+
+<style>
+    .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 1rem;
+        background: #FFF7F2;
+        border-radius: 10px 10px 0 0;
+        border: 1px solid #f0e2dc;
+        border-bottom: none;
+        font-weight: 700;
+        color: #A8172A;
+    }
+    .chat-box {
+        border: 1px solid #f0e2dc;
+        border-radius: 0 0 10px 10px;
+        padding: 1rem;
+        min-height: 320px;
+        max-height: 480px;
+        overflow-y: auto;
+        background: #fafafa;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .burbuja {
+        max-width: 65%;
+        padding: 0.6rem 0.9rem;
+        border-radius: 12px;
+        font-size: 0.92rem;
+        line-height: 1.35;
+    }
+    .burbuja-mia {
+        align-self: flex-end;
+        background: #E8283F;
+        color: #fff;
+        border-bottom-right-radius: 3px;
+    }
+    .burbuja-otro {
+        align-self: flex-start;
+        background: #eee;
+        color: #2b2b2b;
+        border-bottom-left-radius: 3px;
+    }
+    .burbuja-contexto {
+        font-size: 0.72rem;
+        opacity: 0.75;
+        margin-bottom: 0.2rem;
+        font-style: italic;
+    }
+    .burbuja-hora {
+        font-size: 0.68rem;
+        opacity: 0.7;
+        margin-top: 0.25rem;
+        text-align: right;
+    }
+    .chat-form {
+        display: flex;
+        gap: 0.6rem;
+        margin-top: 0.8rem;
+    }
+    .chat-form textarea {
+        flex: 1;
+        resize: none;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        padding: 0.6rem 0.8rem;
+    }
+</style>
+
+<p><a asp-action="Index">← Volver a mensajes</a></p>
+
+<div class="chat-header">
+    <img src="~/imagenes/whatsap.png" alt="Chat" style="width:26px;height:26px;" />
+    @ViewBag.OtroUsuarioNombre
+</div>
+
+<div class="chat-box" id="chatBox">
+    @if (!Model.Any())
+    {
+        <p class="text-muted text-center mt-3">Aún no hay mensajes. ¡Escribe el primero!</p>
+    }
+    @foreach (var m in Model)
+    {
+        <div class="burbuja @(m.EmisorId == miId ? "burbuja-mia" : "burbuja-otro")">
+            @if (m.Producto != null)
+            {
+                <div class="burbuja-contexto">📦 Sobre: @m.Producto.Nombre</div>
+            }
+            @if (m.Pedido != null)
+            {
+                <div class="burbuja-contexto">🧾 Sobre el pedido #@m.PedidoId</div>
+            }
+            <div>@m.Contenido</div>
+            <div class="burbuja-hora">@m.FechaEnvio.ToString("dd/MM HH:mm")</div>
+        </div>
+    }
+</div>
+
+<form asp-action="Enviar" method="post" class="chat-form">
+    <input type="hidden" name="otroUsuarioId" value="@ViewBag.OtroUsuarioId" />
+    @if (ViewBag.ProductoId != null)
+    {
+        <input type="hidden" name="productoId" value="@ViewBag.ProductoId" />
+    }
+    @if (ViewBag.PedidoId != null)
+    {
+        <input type="hidden" name="pedidoId" value="@ViewBag.PedidoId" />
+    }
+    <textarea name="contenido" rows="2" placeholder="Escribe un mensaje...">@ViewBag.MensajeSugerido</textarea>
+    <button type="submit" class="btn btn-danger align-self-end">Enviar</button>
+</form>
+
+<script>
+    // Baja el scroll al último mensaje al cargar
+    var caja = document.getElementById('chatBox');
+    caja.scrollTop = caja.scrollHeight;
+</script>

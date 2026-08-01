@@ -1,5 +1,4 @@
-﻿
-USE TuTienda;
+﻿USE TuTienda;
 GO
 
 /* TABLAS */
@@ -101,6 +100,26 @@ CREATE TABLE DetallesPedido (
     CONSTRAINT FK_DetallesPedido_Productos FOREIGN KEY (ProductoId) REFERENCES Productos(Id)
 );
 GO
+
+CREATE TABLE Mensajes (
+    Id            INT IDENTITY(1,1) PRIMARY KEY,
+    ClienteId     INT NOT NULL,
+    VendedorId    INT NOT NULL,
+    EmisorId      INT NOT NULL,   -- quién escribió ESTE mensaje puntual (el Cliente o el Vendedor)
+    Contenido     NVARCHAR(1000) NOT NULL,
+    ProductoId    INT NULL,       -- opcional: sobre qué producto es la consulta
+    PedidoId      INT NULL,       -- opcional: sobre qué pedido es (ej. pedir anulación)
+    FechaEnvio    DATETIME2 NOT NULL DEFAULT GETDATE(),
+    Leido         BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_Mensajes_Cliente  FOREIGN KEY (ClienteId)  REFERENCES Usuarios(Id),
+    CONSTRAINT FK_Mensajes_Vendedor FOREIGN KEY (VendedorId) REFERENCES Usuarios(Id),
+    CONSTRAINT FK_Mensajes_Emisor   FOREIGN KEY (EmisorId)   REFERENCES Usuarios(Id),
+    CONSTRAINT FK_Mensajes_Producto FOREIGN KEY (ProductoId) REFERENCES Productos(Id),
+    CONSTRAINT FK_Mensajes_Pedido   FOREIGN KEY (PedidoId)   REFERENCES Pedidos(Id)
+);
+GO
+
 
 /* STORED PROCEDURES*/
 

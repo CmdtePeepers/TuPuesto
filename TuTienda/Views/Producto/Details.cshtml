@@ -4,6 +4,33 @@
     ViewData["Title"] = "Detalles del Producto";
 }
 
+<style>
+    .btn-mensaje-flotante {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #25D366;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+        z-index: 1000;
+        transition: transform 0.15s ease;
+    }
+
+        .btn-mensaje-flotante:hover {
+            transform: scale(1.08);
+        }
+
+        .btn-mensaje-flotante img {
+            width: 32px;
+            height: 32px;
+        }
+</style>
+
 <h1>Detalles del Producto</h1>
 
 <div>
@@ -16,25 +43,48 @@
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
+        <dd class="col-sm-9">S/ @Model.Precio.ToString("0.00")</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Stock)</dt>
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Stock)</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ImagenUrl)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.ImagenUrl)</dd>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <img src="@Model.ImagenUrl" alt="@Model.Nombre" style="max-width:220px; border-radius:8px;" />
+            }
+        </dd>
 
         <dt class="col-sm-3">Categoría</dt>
-        <dd class="col-sm-9">@Model?.Categoria?.Nombre</dd>
+        <dd class="col-sm-9">@Model.Categoria?.Nombre</dd>
 
         <dt class="col-sm-3">Vendedor</dt>
-        <dd class="col-sm-9">@Model?.Vendedor?.Nombres</dd>
+        <dd class="col-sm-9">@(Model.Vendedor?.NombreTienda ?? Model.Vendedor?.Nombres)</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Activo)</dt>
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Activo)</dd>
     </dl>
 </div>
+
+@if (Model.Stock > 0 && Model.Activo)
+{
+    <form asp-controller="Carrito" asp-action="Agregar" method="post" style="display:inline;">
+        <input type="hidden" name="productoId" value="@Model.Id" />
+        <input type="hidden" name="cantidad" value="1" />
+        <button type="submit" class="btn btn-danger">Agregar al carrito</button>
+    </form>
+}
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
     <a asp-action="Index">Volver a la lista</a>
 </div>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente") && Model.VendedorId > 0)
+{
+    <a asp-controller="Mensaje" asp-action="Conversacion"
+       asp-route-id="@Model.VendedorId" asp-route-productoId="@Model.Id"
+       class="btn-mensaje-flotante" title="Contactar al vendedor">
+        <img src="~/imagenes/whatsap.png" alt="Contactar" />
+    </a>
+}

@@ -12,20 +12,24 @@
         margin-bottom: 1.4rem;
         overflow: hidden;
     }
+
     .mc-compra-fecha {
         background: #f7f4ee;
         padding: 0.5rem 1.1rem;
         font-size: 0.82rem;
         color: #6b6656;
     }
+
     .mc-pedido-header {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         padding: 0.7rem 1.1rem;
         font-weight: 700;
         color: #A8172A;
         border-top: 1px solid #f0e2dc;
     }
+
     .mc-item {
         display: flex;
         justify-content: space-between;
@@ -33,16 +37,58 @@
         font-size: 0.88rem;
         color: #4a4a4a;
     }
+
     .badge-estado {
         padding: 0.25rem 0.6rem;
         border-radius: 12px;
         font-size: 0.75rem;
         font-weight: 700;
     }
-    .badge-Pendiente { background: #FFF3CD; color: #8a6d00; }
-    .badge-Confirmado { background: #D4EDFF; color: #084298; }
-    .badge-Entregado { background: #D4F7DC; color: #146c2e; }
-    .badge-Cancelado { background: #FFE0E0; color: #A8172A; }
+
+    .badge-Pendiente {
+        background: #FFF3CD;
+        color: #8a6d00;
+    }
+
+    .badge-Confirmado {
+        background: #D4EDFF;
+        color: #084298;
+    }
+
+    .badge-Entregado {
+        background: #D4F7DC;
+        color: #146c2e;
+    }
+
+    .badge-Cancelado {
+        background: #FFE0E0;
+        color: #A8172A;
+    }
+
+    .btn-contactar {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #25D366;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0.5rem 1.1rem;
+    }
+
+        .btn-contactar img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-contactar:hover {
+            background: #1fb856;
+            color: #fff;
+        }
 </style>
 
 <h1>Mis compras</h1>
@@ -74,6 +120,15 @@ else
                         <span>@detalle.Producto?.Nombre × @detalle.Cantidad</span>
                         <span>S/ @detalle.Subtotal.ToString("0.00")</span>
                     </div>
+                }
+
+                @if (pedido.Estado == TuTienda.Models.Enums.EstadoPedido.Pendiente || pedido.Estado == TuTienda.Models.Enums.EstadoPedido.Confirmado)
+                {
+                    <a class="btn-contactar" asp-controller="Mensaje" asp-action="Conversacion"
+                       asp-route-id="@pedido.VendedorId" asp-route-pedidoId="@pedido.Id">
+                        <img src="~/imagenes/whatsap.png" alt="Chat" />
+                        Contactar para anular
+                    </a>
                 }
             }
         </div>
