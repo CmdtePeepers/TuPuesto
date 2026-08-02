@@ -11,6 +11,7 @@
     string? usuarioIdActual = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
     bool esAdmin = User.IsInRole("Administrador");
     bool esVendedor = User.IsInRole("Vendedor");
+    bool puedeComprar = !esAdmin && !esVendedor;
 }
 
 @section Styles {
@@ -66,7 +67,7 @@ else
                     }
 
                     <div class="lp-card-acciones">
-                        @if (hayStock)
+                        @if (hayStock && puedeComprar)
                         {
                             <form asp-controller="Carrito" asp-action="Agregar" method="post">
                                 <input type="hidden" name="productoId" value="@item.Id" />

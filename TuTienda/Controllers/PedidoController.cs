@@ -24,6 +24,7 @@ namespace TuTienda.Controllers
         }
 
         private bool EsAdministrador() => User.IsInRole("Administrador");
+        private bool EsVendedor() => User.IsInRole("Vendedor");
 
         // GET: Pedido/MisCompras -> Historial del Cliente logueado
         public async Task<IActionResult> MisCompras()
@@ -42,24 +43,35 @@ namespace TuTienda.Controllers
         }
 
         // GET: Pedido/Gestionar -> Pedidos recibidos (Vendedor: solo los suyos, Administrador: todos)
-        [Authorize(Roles = "Vendedor,Administrador")]
         public async Task<IActionResult> Gestionar()
         {
             IQueryable<Models.Entities.Pedido> query = _context.Pedidos
                 .Include(p => p.Cliente)
+                .Include(p => p.Vendedor)
                 .Include(p => p.Detalles)
                     .ThenInclude(d => d.Producto)
                 .OrderByDescending(p => p.FechaPedido);
 
-            if (!EsAdministrador())
+            var usuarioId = ObtenerUsuarioId();
+
+            if (EsAdministrador())
             {
-                var usuarioId = ObtenerUsuarioId();
+                // sin filtro: ve todos
+            }
+            else if (EsVendedor())
+            {
                 query = query.Where(p => p.VendedorId == usuarioId);
+            }
+            else
+            {
+                // Cliente: solo sus propias compras
+                query = query.Where(p => p.ClienteId == usuarioId);
             }
 
             var pedidos = await query.ToListAsync();
             return View(pedidos);
         }
+
 
         // POST: Pedido/CambiarEstado
         [Authorize(Roles = "Vendedor,Administrador")]

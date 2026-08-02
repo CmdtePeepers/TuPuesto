@@ -1,0 +1,27 @@
+﻿.badge-estado {
+    padding: 0.25rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.badge-Pendiente {
+    background: #FFF3CD;
+    color: #8a6d00;
+}
+
+.badge-Confirmado {
+    background: #D4EDFF;
+    color: #084298;
+}
+
+.badge-Entregado {
+    background: #D4F7DC;
+    color: #146c2e;
+}
+
+.badge-Cancelado {
+    background: #FFE0E0;
+    color: #A8172A;
+}
+

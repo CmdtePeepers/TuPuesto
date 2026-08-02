@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Productos";
+    bool puedeComprar = !(User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
 }
 
 @section Styles
@@ -14,6 +15,11 @@
 @if (TempData["Mensaje"] != null)
 {
     <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
 @if (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))
@@ -49,7 +55,7 @@ else
                         <div class="prod-card-body">
                             <div class="prod-card-nombre">@producto.Nombre</div>
                             <div class="prod-card-precio">S/ @producto.Precio.ToString("0.00")</div>
-                            @if (producto.Stock > 0)
+                            @if (producto.Stock > 0 && puedeComprar)
                             {
                                 <form asp-controller="Carrito" asp-action="Agregar" method="post">
                                     <input type="hidden" name="productoId" value="@producto.Id" />
@@ -57,7 +63,7 @@ else
                                     <button type="submit" class="prod-card-btn">Agregar al carrito</button>
                                 </form>
                             }
-                            else
+                            else if (producto.Stock <= 0)
                             {
                                 <span class="text-muted" style="font-size:0.8rem;">Sin stock</span>
                             }

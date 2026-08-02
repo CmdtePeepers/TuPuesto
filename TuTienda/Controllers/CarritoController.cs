@@ -25,6 +25,25 @@ namespace TuTienda.Controllers
             return int.TryParse(valor, out var id) ? id : null;
         }
 
+        // El carrito/checkout es exclusivo para Clientes (o invitados sin loguear todavía).
+        // Administrador y Vendedor tienen bloqueado comprar con sus propias cuentas.
+        private bool EsAdminOVendedor()
+        {
+            return User.Identity?.IsAuthenticated == true
+                && (User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
+        }
+
+        private IActionResult? BloquearSiAdminOVendedor()
+        {
+            if (EsAdminOVendedor())
+            {
+                TempData["Error"] = "Los administradores y vendedores no pueden comprar productos con su cuenta.";
+                return RedirectToAction("Index", "Home");
+            }
+            return null;
+        }
+
+
         // Obtiene el SessionId guardado en la cookie del invitado, o crea uno nuevo
         private string ObtenerOCrearSessionId()
         {
@@ -42,7 +61,7 @@ namespace TuTienda.Controllers
             return sessionId;
         }
 
-        // Busca (o crea) el carrito del usuario logueado o del invitado actual
+        // Busca o crea el carrito del usuario logueado o del invitado actual
         private async Task<Carrito> ObtenerOCrearCarrito()
         {
             Carrito? carrito;
@@ -84,6 +103,9 @@ namespace TuTienda.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Agregar(int productoId, int cantidad = 1)
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var producto = await _context.Productos.FindAsync(productoId);
             if (producto == null)
             {
@@ -124,6 +146,9 @@ namespace TuTienda.Controllers
         // GET: Carrito
         public async Task<IActionResult> Index()
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var carrito = await ObtenerOCrearCarrito();
 
             var items = await _context.CarritoItems
@@ -140,6 +165,9 @@ namespace TuTienda.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ActualizarCantidad(int itemId, int cantidad)
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var item = await _context.CarritoItems.FindAsync(itemId);
             if (item != null && cantidad > 0)
             {
@@ -154,6 +182,9 @@ namespace TuTienda.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Eliminar(int itemId)
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var item = await _context.CarritoItems.FindAsync(itemId);
             if (item != null)
             {
@@ -167,6 +198,9 @@ namespace TuTienda.Controllers
         [Authorize]
         public async Task<IActionResult> Checkout()
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var usuarioId = ObtenerUsuarioId();
             var carrito = await _context.Carritos.FirstOrDefaultAsync(c => c.UsuarioId == usuarioId);
 
@@ -197,6 +231,9 @@ namespace TuTienda.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmarPago()
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var usuarioId = ObtenerUsuarioId();
             if (usuarioId == null)
             {
@@ -280,6 +317,9 @@ namespace TuTienda.Controllers
         [Authorize]
         public async Task<IActionResult> Confirmacion()
         {
+            var bloqueo = BloquearSiAdminOVendedor();
+            if (bloqueo != null) return bloqueo;
+
             var idsTexto = TempData["PedidosCreadosIds"] as string;
             if (string.IsNullOrEmpty(idsTexto))
             {

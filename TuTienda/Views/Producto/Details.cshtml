@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Detalles del Producto";
     bool hayStock = Model.Stock > 0 && Model.Activo;
+    bool puedeComprar = !(User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
 }
 
 @section Styles {
@@ -59,7 +60,7 @@
         }
 
         <div class="dp-acciones">
-            @if (hayStock)
+            @if (hayStock && puedeComprar)
             {
                 <form asp-controller="Carrito" asp-action="Agregar" method="post">
                     <input type="hidden" name="productoId" value="@Model.Id" />

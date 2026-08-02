@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Gestionar pedidos";
+    bool puedeGestionarEstados = User.IsInRole("Administrador") || User.IsInRole("Vendedor");
 
     Dictionary<EstadoPedido, EstadoPedido[]> transiciones = new()
     {
@@ -12,20 +13,7 @@
         [EstadoPedido.Cancelado] = Array.Empty<EstadoPedido>(),
     };
 }
-
-<style>
-    .badge-estado {
-        padding: 0.25rem 0.6rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
-    .badge-Pendiente { background: #FFF3CD; color: #8a6d00; }
-    .badge-Confirmado { background: #D4EDFF; color: #084298; }
-    .badge-Entregado { background: #D4F7DC; color: #146c2e; }
-    .badge-Cancelado { background: #FFE0E0; color: #A8172A; }
-</style>
-
+<link rel="stylesheet" href="~/css/pedidoGes.css" asp-append-version="true" />
 <h1>Gestionar pedidos</h1>
 
 @if (TempData["Mensaje"] != null)
@@ -51,7 +39,10 @@ else
                 <th>Fecha</th>
                 <th>Total</th>
                 <th>Estado</th>
-                <th>Cambiar estado</th>
+                @if (puedeGestionarEstados)
+                {
+                    <th>Cambiar estado</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -64,25 +55,28 @@ else
                     <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>S/ @pedido.Total.ToString("0.00")</td>
                     <td><span class="badge-estado badge-@pedido.Estado">@pedido.Estado</span></td>
-                    <td>
-                        @if (siguientes.Length > 0)
-                        {
-                            <form asp-action="CambiarEstado" method="post" class="d-flex gap-2">
-                                <input type="hidden" name="id" value="@pedido.Id" />
-                                <select name="nuevoEstado" class="form-select form-select-sm" style="width:auto;">
-                                    @foreach (var estado in siguientes)
-                                    {
-                                        <option value="@estado">@estado</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-danger">Actualizar</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <span class="text-muted">— sin cambios posibles —</span>
-                        }
-                    </td>
+                    @if (puedeGestionarEstados)
+                    {
+                        <td>
+                            @if (siguientes.Length > 0)
+                            {
+                                <form asp-action="CambiarEstado" method="post" class="d-flex gap-2">
+                                    <input type="hidden" name="id" value="@pedido.Id" />
+                                    <select name="nuevoEstado" class="form-select form-select-sm" style="width:auto;">
+                                        @foreach (var estado in siguientes)
+                                        {
+                                            <option value="@estado">@estado</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-danger">Actualizar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted">— sin cambios posibles —</span>
+                            }
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
