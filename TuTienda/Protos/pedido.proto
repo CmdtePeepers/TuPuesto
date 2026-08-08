@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "TuTienda.Grpc";
+
+service PedidoService {
+	rpc ConsultarEstadoPedido (PedidoRequest) returns (PedidoEstadoResponse);
+	rpc ListarPedidosPorCliente (ClienteRequest) returns (ListarPedidosResponse);
+}
+
+message PedidoRequest {
+	int32 id = 1;
+}
+
+message ClienteRequest {
+	int32 clienteId = 1;
+}
+
+message PedidoEstadoResponse {
+	int32 id = 1;
+	string estado = 2;
+	double total = 3;
+	string fechaPedido = 4;
+	string vendedor = 5;
+	string grupoCompraId = 6;
+	bool encontrado = 7;
+	string mensaje = 8;
+}
+
+message ListarPedidosResponse {
+	repeated PedidoEstadoResponse pedidos = 1;
+	int32 totalRegistros = 2;
+}

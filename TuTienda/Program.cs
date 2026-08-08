@@ -2,11 +2,15 @@ using Microsoft.EntityFrameworkCore;
 using TuTienda.Data;
 using TuTienda.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using TuTienda.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// gRPC
+builder.Services.AddGrpc();
 
 // EF Core + SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -29,6 +33,8 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Endpoint gRPC
+app.MapGrpcService<PedidoGrpcService>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
