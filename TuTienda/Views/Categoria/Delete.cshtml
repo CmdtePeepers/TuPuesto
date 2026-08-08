@@ -2,10 +2,18 @@
 
 @{
     ViewData["Title"] = "Eliminar Categoría";
+    int cantidadProductos = ViewBag.CantidadProductos;
 }
 
 <h1>Eliminar Categoría</h1>
 
+@if (cantidadProductos > 0)
+{
+    <div class="alert alert-warning">
+        Esta categoría tiene <strong>@cantidadProductos producto(s)</strong> registrados.
+        No podrás eliminarla hasta que esos productos se reasignen a otra categoría o se eliminen.
+    </div>
+}
 <h3>¿Estás seguro que deseas eliminar esta categoría?</h3>
 <div>
     <hr />
@@ -19,7 +27,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <input type="submit" value="Eliminar" class="btn btn-danger" disabled="@(cantidadProductos > 0)" /> |
         <a asp-action="Index">Cancelar</a>
     </form>
 </div>

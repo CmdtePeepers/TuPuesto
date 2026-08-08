@@ -125,6 +125,9 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
+            // Avisamos DESDE la pantalla de confirmación si tiene productos asociados
+            ViewBag.CantidadProductos = await _context.Productos.CountAsync(p => p.CategoriaId == id);
+
             return View(categoria);
         }
 
@@ -134,12 +137,32 @@ namespace TuTienda.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var categoria = await _context.Categorias.FindAsync(id);
-            if (categoria != null)
+            if (categoria == null)
             {
-                _context.Categorias.Remove(categoria);
+                return RedirectToAction(nameof(Index));
             }
 
-            await _context.SaveChangesAsync();
+            // Verificación previa: si hay productos usando esta categoría, no dejamos borrar
+            bool tieneProductos = await _context.Productos.AnyAsync(p => p.CategoriaId == id);
+            if (tieneProductos)
+            {
+                TempData["Error"] = $"No se puede eliminar la categoría \"{categoria.Nombre}\" porque hay productos registrados en ella. " +
+                                     "Reasigna o elimina esos productos primero.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Categorias.Remove(categoria);
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = $"Categoría \"{categoria.Nombre}\" eliminada correctamente.";
+            }
+            catch (DbUpdateException)
+            {
+                // Red de seguridad por si se coló otra referencia (SQL nunca miente)
+                TempData["Error"] = $"No se puede eliminar la categoría \"{categoria.Nombre}\" porque tiene datos relacionados.";
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
