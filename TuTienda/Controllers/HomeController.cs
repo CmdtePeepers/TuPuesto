@@ -26,6 +26,23 @@ namespace TuTienda.Controllers
 
             return View(productos);
         }
+        public IActionResult Nosotros()
+        {
+            bool esAdminOVendedor = User.Identity != null && User.Identity.IsAuthenticated
+                && (User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
+
+            if (esAdminOVendedor)
+            {
+                TempData["Error"] = "Esta sección solo está disponible para clientes.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View();
+        }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

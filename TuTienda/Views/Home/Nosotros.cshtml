@@ -1,0 +1,328 @@
+﻿@{
+    ViewData["Title"] = "Nosotros";
+}
+
+<style>
+    .no-hero {
+        background: linear-gradient(135deg, #E8283F 0%, #A8172A 55%, #6E0F1D 100%);
+        color: #fff;
+        border-radius: 12px;
+        padding: 3rem 2.5rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .no-hero::after {
+            content: "";
+            position: absolute;
+            top: -70px;
+            right: -70px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255,201,60,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+    .no-hero-eyebrow {
+        font-size: 0.78rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #FFC93C;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        position: relative;
+    }
+
+    .no-hero h1 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.1rem;
+        font-weight: 700;
+        margin: 0 0 0.8rem;
+        position: relative;
+    }
+
+    .no-hero p {
+        max-width: 640px;
+        margin: 0 auto;
+        color: #FFE1D6;
+        line-height: 1.6;
+        position: relative;
+    }
+
+    .no-bloque {
+        margin-bottom: 2.4rem;
+    }
+
+    .no-bloque-titulo {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2b2b2b;
+        border-left: 4px solid #E8283F;
+        padding-left: 0.7rem;
+        margin-bottom: 1rem;
+    }
+
+    .no-bloque p {
+        color: #5a5a5a;
+        line-height: 1.7;
+        margin-bottom: 0.9rem;
+    }
+
+    .no-mv-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.4rem;
+        margin-bottom: 2.4rem;
+    }
+
+    .no-mv-card {
+        background: #FFF7F2;
+        border: 1px solid #f0e2dc;
+        border-radius: 12px;
+        padding: 1.6rem;
+    }
+
+        .no-mv-card h3 {
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #A8172A;
+            font-size: 1.15rem;
+            margin-bottom: 0.6rem;
+        }
+
+        .no-mv-card p {
+            color: #5a5a5a;
+            line-height: 1.65;
+            font-size: 0.92rem;
+            margin: 0;
+        }
+
+    .no-valores-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2.4rem;
+    }
+
+    .no-valor-card {
+        border: 1px solid #f0e2dc;
+        border-radius: 10px;
+        padding: 1.3rem;
+        text-align: center;
+        transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+        .no-valor-card:hover {
+            box-shadow: 0 6px 16px rgba(232, 40, 63, 0.1);
+            transform: translateY(-2px);
+        }
+
+    .no-valor-icono {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #E8283F, #A8172A);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        margin: 0 auto 0.8rem;
+    }
+
+    .no-valor-card h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b2b2b;
+        margin-bottom: 0.4rem;
+    }
+
+    .no-valor-card p {
+        font-size: 0.85rem;
+        color: #8a8574;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .no-razones {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2.4rem;
+    }
+
+    .no-razon {
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+    }
+
+    .no-razon-check {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #FFF3CD;
+        color: #8a6d00;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .no-razon h4 {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #2b2b2b;
+        margin-bottom: 0.3rem;
+    }
+
+    .no-razon p {
+        font-size: 0.85rem;
+        color: #8a8574;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .no-tagline {
+        background: #2b2b2b;
+        color: #fff;
+        text-align: center;
+        border-radius: 12px;
+        padding: 2.2rem 1.5rem;
+    }
+
+        .no-tagline h2 {
+            font-family: Georgia, 'Times New Roman', serif;
+            color: #FFC93C;
+            font-size: 1.6rem;
+            margin-bottom: 0.7rem;
+        }
+
+        .no-tagline p {
+            color: #ddd;
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-size: 0.92rem;
+        }
+
+    @@media (max-width: 700px) {
+        .no-mv-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="no-hero">
+    <div class="no-hero-eyebrow">Nosotros</div>
+    <h1>Conectamos personas con productos de calidad</h1>
+    <p>Somos una plataforma de comercio electrónico creada para conectar a compradores con distintos vendedores en un solo lugar.</p>
+</div>
+
+<div class="no-bloque">
+    <p>
+        Ofrecemos una amplia variedad de productos y categorías, buscando que cada usuario pueda encontrar lo que necesita
+        de manera sencilla, rápida y segura.
+    </p>
+    <p>
+        Nuestra plataforma combina tecnología y una experiencia de compra cercana, permitiendo que diferentes vendedores
+        puedan mostrar sus productos y llegar a nuevos clientes a través de un espacio digital moderno.
+    </p>
+</div>
+
+<div class="no-mv-grid">
+    <div class="no-mv-card">
+        <h3>Nuestra Misión</h3>
+        <p>
+            Brindar una plataforma virtual accesible, innovadora y confiable que permita a nuestros usuarios encontrar
+            productos de calidad de diferentes vendedores, facilitando una experiencia de compra sencilla, segura y eficiente.
+            Al mismo tiempo, buscamos ofrecer a los vendedores una herramienta tecnológica que les permita mostrar sus
+            productos y ampliar sus oportunidades de negocio.
+        </p>
+    </div>
+    <div class="no-mv-card">
+        <h3>Nuestra Visión</h3>
+        <p>
+            Ser una plataforma de comercio electrónico reconocida por conectar de manera eficiente a compradores y
+            vendedores, destacando por la calidad de sus productos, la innovación tecnológica y una experiencia de usuario
+            confiable y cercana. Buscamos crecer continuamente y convertirnos en un espacio digital donde comprar y vender
+            sea cada vez más fácil.
+        </p>
+    </div>
+</div>
+
+<div class="no-bloque">
+    <h2 class="no-bloque-titulo">Nuestros Valores</h2>
+    <div class="no-valores-grid">
+        <div class="no-valor-card">
+            <div class="no-valor-icono">★</div>
+            <h4>Calidad</h4>
+            <p>Buscamos ofrecer productos que respondan a las necesidades y expectativas de nuestros usuarios.</p>
+        </div>
+        <div class="no-valor-card">
+            <div class="no-valor-icono">🤝</div>
+            <h4>Confianza</h4>
+            <p>Promovemos relaciones transparentes y seguras entre compradores y vendedores.</p>
+        </div>
+        <div class="no-valor-card">
+            <div class="no-valor-icono">💡</div>
+            <h4>Innovación</h4>
+            <p>Utilizamos la tecnología para mejorar continuamente la experiencia de compra y venta.</p>
+        </div>
+        <div class="no-valor-card">
+            <div class="no-valor-icono">❤</div>
+            <h4>Cercanía</h4>
+            <p>Queremos que nuestros usuarios y vendedores encuentren una plataforma fácil de utilizar y pensada para sus necesidades.</p>
+        </div>
+        <div class="no-valor-card">
+            <div class="no-valor-icono">🧩</div>
+            <h4>Variedad</h4>
+            <p>Reunimos productos de diferentes categorías y vendedores para ofrecer más opciones en un solo lugar.</p>
+        </div>
+    </div>
+</div>
+
+<div class="no-bloque">
+    <h2 class="no-bloque-titulo">¿Por qué elegirnos?</h2>
+    <div class="no-razones">
+        <div class="no-razon">
+            <div class="no-razon-check">✓</div>
+            <div>
+                <h4>Todo en un solo lugar</h4>
+                <p>Encuentra productos de diferentes categorías sin tener que buscar en múltiples plataformas.</p>
+            </div>
+        </div>
+        <div class="no-razon">
+            <div class="no-razon-check">✓</div>
+            <div>
+                <h4>Más opciones</h4>
+                <p>Diferentes vendedores pueden ofrecer sus productos, brindando variedad y alternativas a nuestros clientes.</p>
+            </div>
+        </div>
+        <div class="no-razon">
+            <div class="no-razon-check">✓</div>
+            <div>
+                <h4>Tecnología al servicio de tus compras</h4>
+                <p>Búsqueda por categoría, filtros por precio, mensajería directa con el vendedor y seguimiento de tus pedidos, todo desde un solo panel.</p>
+            </div>
+        </div>
+        <div class="no-razon">
+            <div class="no-razon-check">✓</div>
+            <div>
+                <h4>Una comunidad que crece</h4>
+                <p>Nuestro objetivo es crear un espacio donde compradores y vendedores puedan conectarse y crecer juntos.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="no-tagline">
+    <h2>Compra. Descubre. Conecta.</h2>
+    <p>
+        Trabajamos para construir una experiencia de comercio electrónico moderna, confiable y accesible, donde cada
+        producto y cada vendedor tengan la oportunidad de llegar a más personas.
+    </p>
+</div>

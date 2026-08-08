@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TuTienda.Models.Entities;
 using TuTienda.Data;
@@ -10,6 +12,7 @@ namespace TuTienda.Controllers
     public class UsuarioController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly PasswordHasher<Usuario> _hasher = new();
 
         public UsuarioController(AppDbContext context)
         {
@@ -43,6 +46,7 @@ namespace TuTienda.Controllers
         // GET: Usuario/Create
         public IActionResult Create()
         {
+            ViewBag.RolId = new SelectList(_context.Roles, "Id", "Nombre");
             return View();
         }
 
@@ -53,11 +57,15 @@ namespace TuTienda.Controllers
         {
             if (ModelState.IsValid)
             {
+                usuario.PasswordHash = _hasher.HashPassword(usuario, usuario.PasswordHash);
+
                 _context.Add(usuario);
                 await _context.SaveChangesAsync();
                 TempData["Mensaje"] = $"Usuario {usuario.Nombres} registrado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.RolId = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
 
@@ -74,18 +82,33 @@ namespace TuTienda.Controllers
             {
                 return NotFound();
             }
+
+            usuario.PasswordHash = string.Empty;
+            ViewBag.RolId = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
 
         // POST: Usuario/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombres,Apellidos,Email,PasswordHash,RolId,Activo,NombreTienda,DescripcionTienda")] Usuario usuario)
+        public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombres,Apellidos,Email,RolId,Activo,NombreTienda,DescripcionTienda")] Usuario usuario, string? nuevaPassword)
         {
             if (id != usuario.Id)
             {
                 return NotFound();
             }
+
+            var usuarioExistente = await _context.Usuarios.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id);
+            if (usuarioExistente == null)
+            {
+                return NotFound();
+            }
+
+            usuario.PasswordHash = string.IsNullOrWhiteSpace(nuevaPassword)
+                ? usuarioExistente.PasswordHash
+                : _hasher.HashPassword(usuario, nuevaPassword);
+
+            ModelState.Remove(nameof(usuario.PasswordHash));
 
             if (ModelState.IsValid)
             {
@@ -105,8 +128,11 @@ namespace TuTienda.Controllers
                         throw;
                     }
                 }
+                TempData["Mensaje"] = "Usuario actualizado correctamente.";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.RolId = new SelectList(_context.Roles, "Id", "Nombre", usuario.RolId);
             return View(usuario);
         }
 
@@ -134,24 +160,13 @@ namespace TuTienda.Controllers
         public async Task<IActionResult> DeleteConfirmed(int? id)
         {
             var usuario = await _context.Usuarios.FindAsync(id);
-
-            if (usuario == null)
-            {
-                return NotFound();
-            }
-
-            try
+            if (usuario != null)
             {
                 _context.Usuarios.Remove(usuario);
-                await _context.SaveChangesAsync();
+            }
 
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                ViewBag.Error = "No se puede eliminar este usuario porque tiene productos asignados.";
-                return View(usuario);
-            }
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool UsuarioExists(int? id)

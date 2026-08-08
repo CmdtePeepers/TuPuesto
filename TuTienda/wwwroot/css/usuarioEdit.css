@@ -1,0 +1,94 @@
+﻿.card {
+    border: 1px solid #f0e2dc;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #E8283F 0%, #A8172A 100%);
+    padding: 1.2rem 1.6rem;
+    border-bottom: none;
+}
+
+    .card-header h3 {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+    }
+
+    .card-header i {
+        color: #FFC93C;
+    }
+
+.card-body,
+.card > .row {
+    padding: 1.8rem 1.8rem 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.1rem;
+}
+
+    .form-group label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #2b2b2b;
+        margin-bottom: 0.35rem;
+    }
+
+.form-control {
+    border: 1.5px solid #f0d9d2;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.92rem;
+}
+
+    .form-control:focus {
+        border-color: #E8283F;
+        box-shadow: 0 0 0 3px rgba(232, 40, 63, 0.1);
+    }
+
+/* Recuadro especial para el campo de nueva contraseña */
+#nuevaPassword {
+    border-color: #f0d9d2;
+    background: #FFF7F2;
+}
+
+.form-check-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #2b2b2b;
+}
+
+.form-check-input:checked {
+    background-color: #E8283F;
+    border-color: #E8283F;
+}
+
+.btn-primary {
+    background: #E8283F;
+    border: none;
+    padding: 0.7rem 1.7rem;
+    border-radius: 8px;
+    font-weight: 700;
+    transition: background 0.15s ease;
+}
+
+    .btn-primary:hover {
+        background: #A8172A;
+    }
+
+.card > div > a {
+    display: inline-block;
+    margin: 0.5rem 0 1.6rem 1.8rem;
+    color: #A8172A;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .card > div > a:hover {
+        text-decoration: underline;
+    }
