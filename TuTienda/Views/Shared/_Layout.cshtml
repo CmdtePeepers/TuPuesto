@@ -27,14 +27,11 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Producto" asp-action="Index">Productos</a>
-                        </li>
 
-                        @if (!(User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))))
+                        @if (!User.IsInRole("Administrador"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Nosotros">Nosotros</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Producto" asp-action="Index">Productos</a>
                             </li>
                         }
 
@@ -56,6 +53,9 @@
                             @if (User.IsInRole("Vendedor"))
                             {
                                 <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Producto" asp-action="Mantenimiento">Mantenimiento Productos</a>
+                                </li>
+                                <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Pedido" asp-action="Gestionar">Pedidos recibidos</a>
                                 </li>
                                 <li class="nav-item">
@@ -65,6 +65,9 @@
 
                             @if (User.IsInRole("Administrador"))
                             {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Producto" asp-action="Mantenimiento">Mantenimiento Productos</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Index">Usuarios</a>
                                 </li>
@@ -78,11 +81,15 @@
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Reporte" asp-action="Index">Reportes</a>
                                 </li>
                             }
+
+                            @if (!(User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Nosotros">Nosotros</a>
+                                </li>
+                            }
                         }
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
 
                     <ul class="navbar-nav">
@@ -119,7 +126,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - TuTienda - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - TuTienda 
         </div>
     </footer>
 

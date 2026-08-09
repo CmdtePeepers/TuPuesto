@@ -22,11 +22,6 @@
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
-@if (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))
-{
-    <p><a asp-action="Create">+ Crear nuevo producto</a></p>
-}
-
 <form asp-action="Buscar" method="get" class="prod-buscador">
     <input type="text" name="nombre" placeholder="Busca lo que necesites: ropa, laptops, comida..." />
     <button type="submit">Buscar</button>

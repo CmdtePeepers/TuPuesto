@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
-@using System.Security.Claims
 
 @{
     ViewData["Title"] = ViewBag.Titulo;
@@ -7,11 +6,7 @@
     int totalPaginas = ViewBag.TotalPaginas;
     int elementosPorPagina = ViewBag.ElementosPorPagina;
     int categoriaId = ViewBag.CategoriaId;
-
-    string? usuarioIdActual = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    bool esAdmin = User.IsInRole("Administrador");
-    bool esVendedor = User.IsInRole("Vendedor");
-    bool puedeComprar = !esAdmin && !esVendedor;
+    bool puedeComprar = !(User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
 }
 
 @section Styles {
@@ -40,7 +35,6 @@ else
     <div class="lp-grid">
         @foreach (var item in Model)
         {
-            bool puedeGestionar = esAdmin || (esVendedor && usuarioIdActual == item.VendedorId.ToString());
             bool hayStock = item.Activo && item.Stock > 0;
 
             <div class="lp-card">
@@ -76,11 +70,6 @@ else
                             </form>
                         }
                         <div class="lp-links-gestion">
-                            @if (puedeGestionar)
-                            {
-                                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                            }
                             <a asp-action="Details" asp-route-id="@item.Id">Detalles</a>
                         </div>
                     </div>

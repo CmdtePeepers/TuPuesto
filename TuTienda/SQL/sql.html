@@ -1,4 +1,4 @@
-﻿USE TuTienda;
+﻿USE Tutienda;
 GO
 
 /* TABLAS */
@@ -288,24 +288,323 @@ GO
 
 /* SEED: Productos*/
 
--- Carlos (Id = 2) -> Tecnología (CategoriaId = 1)
-INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
+INSERT INTO Productos
+(
+    Nombre,
+    Descripcion,
+    Precio,
+    Stock,
+    ImagenUrl,
+    CategoriaId,
+    VendedorId
+)
 VALUES
-('Laptop Lenovo IdeaPad', 'Laptop Ryzen 5, 16GB RAM, SSD 512GB', 2499.90, 12, '/img/productos/laptop.jpg', 1, 2),
-('Mouse Logitech M170',   'Mouse inalámbrico',                   59.90,   40, '/img/productos/mouse.jpg',  1, 2),
-('Teclado Mecánico Redragon', 'Teclado RGB Switch Blue',        189.90,  18, '/img/productos/teclado.jpg', 1, 2);
+(
+    'Laptop Lenovo IdeaPad',
+    'Laptop Ryzen 5, 16GB RAM, SSD 512GB',
+    2499.90,
+    12,
+    'https://tse4.mm.bing.net/th/id/OIP.SHOKySeJdu7hUH_Sq8nJHAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    1,
+    2
+),
+(
+    'Mouse Logitech M170',
+    'Mouse inalambrico',
+    59.90,
+    38,
+    'https://1pc.co.il/images/thumbs/0060315_-logitech-mouse-m170-wireless-.jpeg',
+    1,
+    3
+),
+(
+    'Teclado Mecánico Redragon',
+    'Teclado RGB Switch Blue',
+    189.90,
+    18,
+    'https://m.media-amazon.com/images/I/71fuHiaFM1L._AC_.jpg',
+    1,
+    2
+),
+(
+    'Polo Básico Blanco',
+    'Algodón 100%',
+    39.90,
+    58,
+    'https://tse2.mm.bing.net/th/id/OIP.ljF3QhnTYuvS6OYypWW0JgHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    1,
+    3
+),
+(
+    'Casaca Jeans',
+    'Casaca de mezclilla',
+    129.90,
+    19,
+    'https://rimage.ripley.com.pe/home.ripley/Attachment/MKP/138/PMP00003445699/full_image-1.jpg',
+    2,
+    3
+),
+(
+    'Zapatillas Urbanas',
+    'Color negro',
+    159.90,
+    15,
+    'https://rimage.ripley.com.pe/home.ripley/Attachment/WOP/1/2025332414767/image2-2025332414767.jpg',
+    2,
+    3
+),
+(
+    'Juego de Ollas',
+    'Acero inoxidable',
+    299.90,
+    5,
+    'https://tse2.mm.bing.net/th/id/OIP.j7HekJS6kahoQnVNp1r85gHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    3,
+    4
+),
+(
+    'Silla Ergonómica',
+    'Ideal para oficina',
+    449.90,
+    3,
+    'https://tse3.mm.bing.net/th/id/OIP.FSN4f0EWcEN8rDGbbOXIQwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    3,
+    4
+),
+(
+    'Memoria ram ddr5 16GB',
+    'Kingston Fury Beast DDR5',
+    982.00,
+    10,
+    'https://tatauy.vtexassets.com/arquivos/ids/468242/image_1.jpg?v=637976593025700000',
+    1,
+    2
+),
+(
+    'hervidora',
+    'hervidora oster',
+    98.00,
+    19,
+    'https://realplaza.vtexassets.com/arquivos/ids/32120296-800-auto?v=638132096506530000&width=800&height=auto&aspect=true',
+    3,
+    2
+),
+(
+    'Fleidora de Aire',
+    'Princess nuevo',
+    250.98,
+    30,
+    'https://www.powerplanetonline.com/cdnassets/freidora_aire_princess_xl_182024_01_l.jpg',
+    3,
+    2
+),
+(
+    'Teclado',
+    'Teclado RGB Gamer',
+    69.90,
+    100,
+    'https://tse4.mm.bing.net/th/id/OIP.bPl3R1qP-Agt5mcttILp1QHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3',
+    1,
+    2
+);
+GO
 
--- María (Id = 3) -> Ropa (CategoriaId = 2)
-INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
-VALUES
-('Polo Básico Blanco',  'Algodón 100%',        39.90,  60, '/img/productos/polo.jpg',      2, 3),
-('Casaca Jeans',        'Casaca de mezclilla', 129.90, 20, '/img/productos/casaca.jpg',    2, 3),
-('Zapatillas Urbanas',  'Color negro',         159.90, 15, '/img/productos/zapatillas.jpg',2, 3);
+/* ============================================================
+   DATOS DE PRUEBA: Pedidos + DetallesPedido
+   Clientes:  5=Pedro, 6=Ana, 7=José
+   Vendedores: 2=Carlos (Tech Store), 3=María (Moda Express), 4=Luis (Casa Fácil)
+   Estados: 0=Pendiente, 1=Confirmado, 2=Entregado, 3=Cancelado
+   ============================================================ */
 
--- Luis (Id = 4) -> Hogar (CategoriaId = 3)
-INSERT INTO Productos (Nombre, Descripcion, Precio, Stock, ImagenUrl, CategoriaId, VendedorId)
-VALUES
-('Juego de Ollas',      'Acero inoxidable',       299.90, 10, '/img/productos/ollas.jpg',      3, 4),
-('Licuadora Oster',     '600W, vaso de vidrio',   249.90, 8,  '/img/productos/licuadora.jpg',  3, 4),
-('Silla Ergonómica',    'Ideal para oficina',     449.90, 5,  '/img/productos/silla.jpg',      3, 4);
+DECLARE @g UNIQUEIDENTIFIER;
+DECLARE @pid INT;
+
+-- ===================== AÑO 2026 =====================
+
+-- 2026-01-10: Pedro compra a Carlos (Tech Store) -> Laptop
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 2, '2026-01-10 10:30', 2, 2499.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 1, 1, 2499.90, 2499.90);
+
+-- 2026-01-22: Ana compra a María -> Casaca Jeans x2
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 3, '2026-01-22 15:00', 1, 259.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 5, 2, 129.90, 259.80);
+
+-- 2026-02-05: José hace una compra dividida (Luis + Carlos), mismo GrupoCompraId
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 4, '2026-02-05 09:15', 2, 749.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 8, 1, 449.90, 449.90), (@pid, 7, 1, 299.90, 299.90);
+
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 2, '2026-02-05 09:15', 2, 59.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 2, 1, 59.90, 59.90);
+
+-- 2026-02-18: Pedro compra a Carlos -> Mouse x3 (Pendiente)
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 2, '2026-02-18 12:40', 0, 179.70, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 2, 3, 59.90, 179.70);
+
+-- 2026-03-03: Ana compra a Carlos -> Memoria RAM
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 2, '2026-03-03 17:20', 1, 982.00, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 9, 1, 982.00, 982.00);
+
+-- 2026-03-20: José compra a María -> Polo x2 (Cancelado)
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 3, '2026-03-20 11:05', 3, 79.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 4, 2, 39.90, 79.80);
+
+-- 2026-04-08: Pedro compra a Luis -> hervidora x2
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 4, '2026-04-08 08:50', 2, 196.00, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 10, 2, 98.00, 196.00);
+
+-- 2026-04-25: Ana compra a Carlos -> Teclado gamer + Teclado Mecánico
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 2, '2026-04-25 19:10', 1, 259.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 12, 1, 69.90, 69.90), (@pid, 3, 1, 189.90, 189.90);
+
+-- 2026-05-11: José compra a Carlos -> Laptop
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 2, '2026-05-11 14:00', 2, 2499.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 1, 1, 2499.90, 2499.90);
+
+-- 2026-05-27: Pedro compra a María -> Zapatillas (Pendiente)
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 3, '2026-05-27 16:35', 0, 159.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 6, 1, 159.90, 159.90);
+
+-- 2026-06-02: Ana compra a Luis -> Juego de Ollas
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 4, '2026-06-02 10:15', 1, 299.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 7, 1, 299.90, 299.90);
+
+-- 2026-06-19: José compra a Carlos -> Freidora de Aire
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 2, '2026-06-19 20:00', 2, 250.98, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 11, 1, 250.98, 250.98);
+
+-- 2026-07-07: Pedro compra a Carlos -> Memoria RAM x2
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 2, '2026-07-07 09:45', 1, 1964.00, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 9, 2, 982.00, 1964.00);
+
+-- 2026-07-24: Ana compra a María -> Casaca Jeans (Cancelado)
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 3, '2026-07-24 13:25', 3, 129.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 5, 1, 129.90, 129.90);
+
+-- 2026-08-01: José compra a Luis -> Silla Ergonómica x2
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 4, '2026-08-01 11:00', 2, 899.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 8, 2, 449.90, 899.80);
+
+-- 2026-08-05: Pedro compra a Carlos -> Mouse + Teclado gamer (Pendiente)
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 2, '2026-08-05 18:10', 0, 129.80, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 2, 1, 59.90, 59.90), (@pid, 12, 1, 69.90, 69.90);
+
+-- ===================== AÑO 2025 =====================
+
+-- 2025-03-14: Ana compra a Carlos -> Laptop
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 2, '2025-03-14 10:00', 2, 2499.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 1, 1, 2499.90, 2499.90);
+
+-- 2025-06-22: José compra a María -> Polo x3
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 3, '2025-06-22 15:30', 2, 119.70, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 4, 3, 39.90, 119.70);
+
+-- 2025-09-10: Pedro compra a Luis -> Juego de Ollas
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 4, '2025-09-10 12:00', 1, 299.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 7, 1, 299.90, 299.90);
+
+-- 2025-12-05: Ana compra a Carlos -> Memoria RAM
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 6, 2, '2025-12-05 09:40', 2, 982.00, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 9, 1, 982.00, 982.00);
+
+-- ===================== AÑO 2024 =====================
+
+-- 2024-06-18: José compra a Carlos -> Teclado Mecánico
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 7, 2, '2024-06-18 17:00', 2, 189.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 3, 1, 189.90, 189.90);
+
+-- 2024-11-29: Pedro compra a María -> Zapatillas
+SET @g = NEWID();
+INSERT INTO Pedidos (GrupoCompraId, ClienteId, VendedorId, FechaPedido, Estado, Total, MetodoPagoSimulado)
+VALUES (@g, 5, 3, '2024-11-29 13:15', 2, 159.90, 'Pago simulado');
+SET @pid = SCOPE_IDENTITY();
+INSERT INTO DetallesPedido (PedidoId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
+VALUES (@pid, 6, 1, 159.90, 159.90);
+
 GO

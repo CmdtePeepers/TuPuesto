@@ -2,9 +2,19 @@
 
 @{
     ViewData["Title"] = "Eliminar Producto";
+    bool tieneHistorial = ViewBag.TieneHistorial;
 }
 
 <h1>Eliminar Producto</h1>
+
+@if (tieneHistorial)
+{
+    <div class="alert alert-warning">
+        Este producto ya tiene pedidos, carritos o mensajes asociados.
+        No podrás eliminarlo — puedes <strong>desactivarlo</strong> en su lugar desde
+        <a asp-action="Mantenimiento">Mantenimiento de Productos</a> para que deje de mostrarse en la tienda.
+    </div>
+}
 
 <h3>¿Estás seguro que deseas eliminar este producto?</h3>
 <div>
@@ -14,7 +24,7 @@
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Precio)</dd>
+        <dd class="col-sm-9">S/ @Model.Precio.ToString("0.00")</dd>
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Stock)</dt>
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Stock)</dd>
@@ -22,7 +32,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
-        <a asp-action="Index">Cancelar</a>
+        <input type="submit" value="Eliminar" class="btn btn-danger" disabled="@tieneHistorial" /> |
+        <a asp-action="Mantenimiento">Cancelar</a>
     </form>
 </div>

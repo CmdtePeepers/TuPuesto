@@ -1,0 +1,83 @@
+﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
+
+@{
+    ViewData["Title"] = "Mantenimiento de Productos";
+}
+
+<style>
+    .mp-badge {
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .mp-activo {
+        background: #D4F7DC;
+        color: #146c2e;
+    }
+
+    .mp-inactivo {
+        background: #FFE0E0;
+        color: #A8172A;
+    }
+</style>
+
+<h1>Mantenimiento de Productos</h1>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p><a asp-action="Create">+ Crear nuevo producto</a></p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-light border">Aún no tienes productos registrados.</div>
+}
+else
+{
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Nombre</td>
+                    <td>@(p.Categoria?.Nombre ?? "—")</td>
+                    <td>S/ @p.Precio.ToString("0.00")</td>
+                    <td>@p.Stock</td>
+                    <td>
+                        <span class="mp-badge @(p.Activo ? "mp-activo" : "mp-inactivo")">
+                            @(p.Activo ? "Activo" : "Inactivo")
+                        </span>
+                    </td>
+                    <td>
+                        <form asp-action="CambiarActivo" asp-route-id="@p.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm @(p.Activo ? "btn-outline-secondary" : "btn-outline-success")">
+                                @(p.Activo ? "Desactivar" : "Activar")
+                            </button>
+                        </form>
+                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Detalles</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

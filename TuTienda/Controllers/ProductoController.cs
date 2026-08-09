@@ -61,7 +61,50 @@ namespace TuTienda.Controllers
             return View(secciones);
         }
 
-        // GET: Producto/Categoria/5 -> Todos los productos de una categoría (paginado)
+        // GET: Producto/Mantenimiento : Vendedor/Admin ven TODOS sus productos
+        [Authorize(Roles = "Administrador,Vendedor")]
+        public async Task<IActionResult> Mantenimiento()
+        {
+            IQueryable<Producto> query = _context.Productos
+                .Include(p => p.Categoria)
+                .Include(p => p.Vendedor)
+                .OrderBy(p => p.Nombre);
+
+            if (!EsAdministrador())
+            {
+                var usuarioId = ObtenerUsuarioId();
+                query = query.Where(p => p.VendedorId == usuarioId);
+            }
+
+            var productos = await query.ToListAsync();
+            return View(productos);
+        }
+
+        // POST: Producto/CambiarActivo/5 :  activa/desactiva con un clic,
+        [Authorize(Roles = "Administrador,Vendedor")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CambiarActivo(int id)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+
+            if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
+            {
+                return Forbid();
+            }
+
+            producto.Activo = !producto.Activo;
+            await _context.SaveChangesAsync();
+
+            TempData["Mensaje"] = $"\"{producto.Nombre}\" ahora está {(producto.Activo ? "activo" : "inactivo")}.";
+            return RedirectToAction(nameof(Mantenimiento));
+        }
+
+        // GET: Producto/Categoria/5 : Todos los productos de una categoría (paginado)
         [AllowAnonymous]
         public async Task<IActionResult> Categoria(int id, string? nombre, decimal precioMin = 0, int paginaActual = 1, int elementosPorPagina = 8)
         {
@@ -158,7 +201,7 @@ namespace TuTienda.Controllers
             if (ModelState.IsValid)
             {
                 await productoRepository.AgregarProducto(producto);
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Mantenimiento));
             }
 
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
@@ -243,7 +286,7 @@ namespace TuTienda.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Mantenimiento));
             }
 
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
@@ -275,6 +318,12 @@ namespace TuTienda.Controllers
             {
                 return Forbid();
             }
+            // Avisamos desde la confirmación si el producto ya tiene historial (pedidos/carritos/mensajes)
+            bool tieneHistorial = await _context.DetallesPedido.AnyAsync(d => d.ProductoId == id)
+                || await _context.CarritoItems.AnyAsync(c => c.ProductoId == id)
+                || await _context.Mensajes.AnyAsync(m => m.ProductoId == id);
+
+            ViewBag.TieneHistorial = tieneHistorial;
 
             return View(producto);
         }
@@ -288,7 +337,7 @@ namespace TuTienda.Controllers
             var producto = await _context.Productos.FindAsync(id);
             if (producto == null)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Mantenimiento));
             }
 
             if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
@@ -296,9 +345,29 @@ namespace TuTienda.Controllers
                 return Forbid();
             }
 
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            bool tieneHistorial = await _context.DetallesPedido.AnyAsync(d => d.ProductoId == id)
+                || await _context.CarritoItems.AnyAsync(c => c.ProductoId == id)
+                || await _context.Mensajes.AnyAsync(m => m.ProductoId == id);
+
+            if (tieneHistorial)
+            {
+                TempData["Error"] = $"No se puede eliminar \"{producto.Nombre}\" porque ya tiene pedidos, carritos o mensajes asociados. " +
+                                     "Puedes desactivarlo en su lugar desde Mantenimiento de Productos.";
+                return RedirectToAction(nameof(Mantenimiento));
+            }
+
+            try
+            {
+                _context.Productos.Remove(producto);
+                await _context.SaveChangesAsync();
+                TempData["Mensaje"] = $"Producto \"{producto.Nombre}\" eliminado correctamente.";
+            }
+            catch (DbUpdateException)
+            {
+                TempData["Error"] = $"No se puede eliminar \"{producto.Nombre}\" porque tiene datos relacionados. Desactívalo en su lugar.";
+            }
+
+            return RedirectToAction(nameof(Mantenimiento));
         }
 
         private bool ProductoExists(int id)
