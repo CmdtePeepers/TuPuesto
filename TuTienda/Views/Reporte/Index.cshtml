@@ -2,19 +2,47 @@
     ViewData["Title"] = "Reportes";
 }
 
-<h1>Reportes</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
 
-<div class="row g-3 mt-2">
-    <div class="col-md-6 col-lg-3">
-        <a asp-action="VentasPorPeriodo" class="btn btn-outline-danger w-100 py-4"> Ventas por período</a>
+<div class="container py-4">
+
+    <div class="tt-rep-header">
+        <h2 class="tt-seccion-titulo mb-1">Panel de Reportes</h2>
+        <p class="text-muted mb-0">Consulta el rendimiento de la tienda: ventas, productos y vendedores.</p>
     </div>
-    <div class="col-md-6 col-lg-3">
-        <a asp-action="ProductosMasVendidos" class="btn btn-outline-danger w-100 py-4"> Productos más vendidos</a>
+
+    <div class="tt-rep-grid">
+
+        <a asp-action="VentasPorPeriodo" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="tt-rep-titulo">Ventas por período</div>
+            <div class="tt-rep-desc">Revisa el total vendido y la cantidad de pedidos en un rango de fechas.</div>
+            <div class="tt-rep-flecha">Ver reporte →</div>
+        </a>
+
+        <a asp-action="ProductosMasVendidos" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-box-seam-fill"></i></div>
+            <div class="tt-rep-titulo">Productos más vendidos</div>
+            <div class="tt-rep-desc">Identifica el top de productos con mejor rendimiento en ventas.</div>
+            <div class="tt-rep-flecha">Ver reporte →</div>
+        </a>
+
+        <a asp-action="IngresosPorVendedor" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-cash-coin"></i></div>
+            <div class="tt-rep-titulo">Ingresos por vendedor</div>
+            <div class="tt-rep-desc">Compara cuánto ha generado cada vendedor de la plataforma.</div>
+            <div class="tt-rep-flecha">Ver reporte →</div>
+        </a>
+
+        <a asp-action="ComparacionMensual" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-bar-chart-line-fill"></i></div>
+            <div class="tt-rep-titulo">Comparación mensual</div>
+            <div class="tt-rep-desc">Observa la evolución de ventas mes a mes durante el año.</div>
+            <div class="tt-rep-flecha">Ver reporte →</div>
+        </a>
+
     </div>
-    <div class="col-md-6 col-lg-3">
-        <a asp-action="IngresosPorVendedor" class="btn btn-outline-danger w-100 py-4"> Ingresos por vendedor</a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a asp-action="ComparacionMensual" class="btn btn-outline-danger w-100 py-4"> Comparación mensual</a>
-    </div>
+
 </div>

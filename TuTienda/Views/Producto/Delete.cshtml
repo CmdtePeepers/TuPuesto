@@ -5,34 +5,50 @@
     bool tieneHistorial = ViewBag.TieneHistorial;
 }
 
-<h1>Eliminar Producto</h1>
-
-@if (tieneHistorial)
-{
-    <div class="alert alert-warning">
-        Este producto ya tiene pedidos, carritos o mensajes asociados.
-        No podrás eliminarlo — puedes <strong>desactivarlo</strong> en su lugar desde
-        <a asp-action="Mantenimiento">Mantenimiento de Productos</a> para que deje de mostrarse en la tienda.
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 }
 
-<h3>¿Estás seguro que deseas eliminar este producto?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<div class="container py-4">
+    <div class="tt-panel">
+        <div class="tt-panel-header tt-header-peligro">
+            <h3><i class="bi bi-trash-fill me-2"></i>Eliminar Producto</h3>
+        </div>
+        <div class="tt-panel-body">
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Precio)</dt>
-        <dd class="col-sm-9">S/ @Model.Precio.ToString("0.00")</dd>
+            @if (tieneHistorial)
+            {
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Este producto ya tiene pedidos, carritos o mensajes asociados. No podrás eliminarlo —
+                    puedes <strong>desactivarlo</strong> en su lugar desde
+                    <a asp-action="Mantenimiento">Mantenimiento de Productos</a>.
+                </div>
+            }
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Stock)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Stock)</dd>
-    </dl>
+            <p class="fw-semibold">¿Estás seguro que deseas eliminar este producto?</p>
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" disabled="@tieneHistorial" /> |
-        <a asp-action="Mantenimiento">Cancelar</a>
-    </form>
+            <dl class="row tt-info-box tt-info-peligro">
+                <dt class="col-sm-3">Nombre</dt>
+                <dd class="col-sm-9">@Model.Nombre</dd>
+
+                <dt class="col-sm-3">Precio</dt>
+                <dd class="col-sm-9">S/ @Model.Precio.ToString("0.00")</dd>
+
+                <dt class="col-sm-3">Stock</dt>
+                <dd class="col-sm-9">@Model.Stock</dd>
+
+                <dt class="col-sm-3">Categoría</dt>
+                <dd class="col-sm-9">@(Model.Categoria?.Nombre ?? "—")</dd>
+            </dl>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger" @(tieneHistorial ? "disabled" : "")>
+                    <i class="bi bi-trash-fill me-2"></i>Eliminar
+                </button>
+                <a asp-action="Mantenimiento" class="btn btn-dark ms-2">Cancelar</a>
+            </form>
+        </div>
+    </div>
 </div>

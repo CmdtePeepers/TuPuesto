@@ -1,0 +1,71 @@
+﻿@model List<TuTienda.Models.Entities.Contacto>
+
+@{
+    ViewData["Title"] = "Mensajes de contacto";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
+
+<div class="container py-4">
+
+    <h2 class="tt-seccion-titulo mb-1">Mensajes de contacto</h2>
+    <p class="text-muted mb-4">Consultas recibidas desde el formulario público de contacto.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="tt-msg-vacio">
+            Aún no hay mensajes de contacto. Cuando alguien escriba desde el formulario, aparecerá aquí.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle tt-msg-tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Contacto</th>
+                        <th>Motivo</th>
+                        <th>Mensaje</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        <tr>
+                            <td>@c.FechaEnvio.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fw-semibold">@c.Nombre</td>
+                            <td>
+                                @c.Email
+                                @if (!string.IsNullOrEmpty(c.Telefono))
+                                {
+                                    <span class="text-muted">· @c.Telefono</span>
+                                }
+                            </td>
+                            <td><span class="tt-msg-motivo">@c.Motivo</span></td>
+                            <td class="tt-msg-mensaje">@c.Mensaje</td>
+                            <td>
+                                <span class="tt-msg-badge @(c.Atendido ? "tt-msg-atendido" : "tt-msg-pendiente")">
+                                    @(c.Atendido ? "Atendido" : "Pendiente")
+                                </span>
+                            </td>
+                            <td>
+                                <form asp-action="MarcarAtendido" asp-route-id="@c.Id" method="post">
+                                    <button type="submit" class="tt-msg-btn @(c.Atendido ? "tt-msg-btn-desmarcar" : "tt-msg-btn-marcar")">
+                                        @(c.Atendido ? "Marcar pendiente" : "Marcar atendido")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>

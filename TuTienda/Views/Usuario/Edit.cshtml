@@ -5,91 +5,82 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/usuarioEdit.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 }
 
 <div class="container py-4">
 
     <div class="row justify-content-center">
-
         <div class="col-lg-7 col-md-9">
 
-            <div class="card">
+            <div class="tt-panel">
 
-                <div class="card-header text-white">
-                    <h3>
-                        <i class="bi bi-pencil-square me-2"></i>
-                        Editar Usuario
-                    </h3>
+                <div class="tt-panel-header">
+                    <h3><i class="bi bi-pencil-square me-2"></i>Editar Usuario</h3>
                 </div>
 
-                <div class="card-body">
+                <div class="tt-panel-body">
                     <form asp-action="Edit">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <input type="hidden" asp-for="Id" />
 
-                        <div class="form-group">
-                            <label asp-for="Nombres" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="Nombres" class="tt-form-label"></label>
                             <input asp-for="Nombres" class="form-control" />
                             <span asp-validation-for="Nombres" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Apellidos" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="Apellidos" class="tt-form-label"></label>
                             <input asp-for="Apellidos" class="form-control" />
                             <span asp-validation-for="Apellidos" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Email" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="Email" class="tt-form-label"></label>
                             <input asp-for="Email" class="form-control" />
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="nuevaPassword" class="control-label">Nueva contraseña</label>
+                        <div class="mb-3">
+                            <label for="nuevaPassword" class="tt-form-label">Nueva contraseña</label>
                             <input type="password" id="nuevaPassword" name="nuevaPassword" class="form-control" placeholder="Dejar en blanco para no cambiarla" />
                             <small class="form-text text-muted">Solo llena este campo si quieres restablecer la contraseña de este usuario.</small>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="RolId" class="control-label">Rol</label>
-                            <select asp-for="RolId" class="form-control" asp-items="ViewBag.RolId"></select>
+                        <div class="mb-3">
+                            <label asp-for="RolId" class="tt-form-label">Rol</label>
+                            <select asp-for="RolId" class="form-select" asp-items="ViewBag.RolId"></select>
                             <span asp-validation-for="RolId" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                            </label>
+                        <div class="form-check form-switch mb-4">
+                            <input class="form-check-input" asp-for="Activo" />
+                            <label class="form-check-label ms-2 fw-semibold">@Html.DisplayNameFor(model => model.Activo)</label>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="NombreTienda" class="control-label"></label>
+                        <div class="mb-3">
+                            <label asp-for="NombreTienda" class="tt-form-label"></label>
                             <input asp-for="NombreTienda" class="form-control" />
                             <span asp-validation-for="NombreTienda" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="DescripcionTienda" class="control-label"></label>
+                        <div class="mb-4">
+                            <label asp-for="DescripcionTienda" class="tt-form-label"></label>
                             <input asp-for="DescripcionTienda" class="form-control" />
                             <span asp-validation-for="DescripcionTienda" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <input type="submit" value="Guardar" class="btn btn-primary" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-dark"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+                            <button type="submit" class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Guardar</button>
                         </div>
                     </form>
-                </div>
-
-                <div>
-                    <a asp-action="Index">← Volver a la lista</a>
                 </div>
 
             </div>
 
         </div>
-
     </div>
 
 </div>

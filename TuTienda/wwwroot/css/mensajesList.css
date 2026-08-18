@@ -1,0 +1,133 @@
+﻿.ml-header {
+    margin-bottom: 1.6rem;
+}
+
+.ml-titulo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2b2b2b;
+    margin: 0;
+}
+
+.ml-subtitulo {
+    color: #8a8574;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+}
+
+.ml-vacio {
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    color: #a68f89;
+    border: 1.5px dashed #f0d9d2;
+    border-radius: 12px;
+    background: #FFF7F2;
+}
+
+.ml-vacio-icono {
+    font-size: 2.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.ml-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid #f0e2dc;
+    border-radius: 12px;
+    margin-bottom: 0.7rem;
+    text-decoration: none;
+    color: inherit;
+    background: #fff;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+    .ml-item:hover {
+        color: inherit;
+        box-shadow: 0 6px 16px rgba(232, 40, 63, 0.08);
+        transform: translateY(-1px);
+        border-color: #f0c9c0;
+    }
+
+    .ml-item.ml-no-leido {
+        border-left: 4px solid #E8283F;
+        background: #FFFBF9;
+    }
+
+.ml-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E8283F, #A8172A);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.ml-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ml-nombre {
+    font-weight: 700;
+    color: #2b2b2b;
+    font-size: 0.98rem;
+}
+
+.ml-item.ml-no-leido .ml-nombre {
+    color: #A8172A;
+}
+
+.ml-preview {
+    color: #8a8574;
+    font-size: 0.86rem;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 480px;
+}
+
+.ml-item.ml-no-leido .ml-preview {
+    color: #4a4a4a;
+    font-weight: 600;
+}
+
+.ml-meta {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.ml-fecha {
+    font-size: 0.76rem;
+    color: #a68f89;
+    margin-bottom: 0.4rem;
+}
+
+.ml-badge {
+    background: #E8283F;
+    color: #fff;
+    border-radius: 50%;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+@media (max-width: 576px) {
+    .ml-preview {
+        max-width: 160px;
+    }
+}

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Conversación";
     int miId = ViewBag.MiId;
+    int otroUsuarioId = ViewBag.OtroUsuarioId;
 }
 
 <style>
@@ -73,6 +74,11 @@
         border-radius: 8px;
         padding: 0.6rem 0.8rem;
     }
+    .chat-estado-conexion {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+        color: #8a8574;
+    }
 </style>
 
 <p><a asp-action="Index">← Volver a mensajes</a></p>
@@ -82,10 +88,12 @@
     @ViewBag.OtroUsuarioNombre
 </div>
 
+<div class="chat-estado-conexion" id="estadoConexion">Conectando...</div>
+
 <div class="chat-box" id="chatBox">
     @if (!Model.Any())
     {
-        <p class="text-muted text-center mt-3">Aún no hay mensajes. ¡Escribe el primero!</p>
+        <p class="text-muted text-center mt-3" id="mensajeVacio">Aún no hay mensajes. ¡Escribe el primero!</p>
     }
     @foreach (var m in Model)
     {
@@ -104,22 +112,74 @@
     }
 </div>
 
-<form asp-action="Enviar" method="post" class="chat-form">
-    <input type="hidden" name="otroUsuarioId" value="@ViewBag.OtroUsuarioId" />
-    @if (ViewBag.ProductoId != null)
-    {
-        <input type="hidden" name="productoId" value="@ViewBag.ProductoId" />
-    }
-    @if (ViewBag.PedidoId != null)
-    {
-        <input type="hidden" name="pedidoId" value="@ViewBag.PedidoId" />
-    }
-    <textarea name="contenido" rows="2" placeholder="Escribe un mensaje...">@ViewBag.MensajeSugerido</textarea>
+<form id="formEnviar" class="chat-form">
+    <textarea id="textoMensaje" rows="2" placeholder="Escribe un mensaje...">@ViewBag.MensajeSugerido</textarea>
     <button type="submit" class="btn btn-danger align-self-end">Enviar</button>
 </form>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
 <script>
-    // Baja el scroll al último mensaje al cargar
-    var caja = document.getElementById('chatBox');
-    caja.scrollTop = caja.scrollHeight;
+    const miId = @miId;
+    const otroUsuarioId = @otroUsuarioId;
+
+    const chatBox = document.getElementById('chatBox');
+    const estadoConexion = document.getElementById('estadoConexion');
+
+    const conexion = new signalR.HubConnectionBuilder()
+        .withUrl("/mensajehub")
+        .withAutomaticReconnect()
+        .build();
+
+    conexion.on("RecibirMensaje", function(msg) {
+        agregarBurbuja(msg);
+    });
+
+    conexion.start()
+        .then(function() {
+            estadoConexion.textContent = "Conectado";
+            return conexion.invoke("UnirseConversacion", otroUsuarioId);
+        })
+        .catch(function(err) {
+            estadoConexion.textContent = "Sin conexión en tiempo real (revisa tu internet)";
+            console.error(err.toString());
+        });
+
+    function agregarBurbuja(msg) {
+        const vacio = document.getElementById('mensajeVacio');
+        if (vacio) vacio.remove();
+
+        const esMia = msg.emisorId === miId;
+        const div = document.createElement('div');
+        div.className = 'burbuja ' + (esMia ? 'burbuja-mia' : 'burbuja-otro');
+
+        let contexto = '';
+        if (msg.productoNombre) {
+            contexto = '<div class="burbuja-contexto">📦 Sobre: ' + msg.productoNombre + '</div>';
+        } else if (msg.pedidoId) {
+            contexto = '<div class="burbuja-contexto">🧾 Sobre el pedido #' + msg.pedidoId + '</div>';
+        }
+
+        div.innerHTML = contexto + '<div></div><div class="burbuja-hora">' + msg.fecha + '</div>';
+        div.querySelector('div:nth-child(' + (contexto ? 2 : 1) + ')').textContent = msg.contenido;
+
+        chatBox.appendChild(div);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    document.getElementById('formEnviar').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const textarea = document.getElementById('textoMensaje');
+        const texto = textarea.value.trim();
+        if (!texto) return;
+
+        conexion.invoke("EnviarMensaje", otroUsuarioId, texto, @(ViewBag.ProductoId ?? "null"), @(ViewBag.PedidoId ?? "null"))
+            .catch(function(err) {
+                console.error(err.toString());
+            });
+
+        textarea.value = "";
+    });
+
+    chatBox.scrollTop = chatBox.scrollHeight;
 </script>
+

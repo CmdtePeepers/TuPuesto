@@ -1,83 +1,105 @@
 ﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
 
 @{
-    ViewData["Title"] = "Mantenimiento de Productos";
+    ViewData["Title"] = "Mis Productos";
 }
 
-<style>
-    .mp-badge {
-        padding: 0.25rem 0.6rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
-
-    .mp-activo {
-        background: #D4F7DC;
-        color: #146c2e;
-    }
-
-    .mp-inactivo {
-        background: #FFE0E0;
-        color: #A8172A;
-    }
-</style>
-
-<h1>Mantenimiento de Productos</h1>
-
-@if (TempData["Mensaje"] != null)
-{
-    <div class="alert alert-success">@TempData["Mensaje"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 }
 
-<p><a asp-action="Create">+ Crear nuevo producto</a></p>
+<div class="container py-4">
 
-@if (!Model.Any())
-{
-    <div class="alert alert-light border">Aún no tienes productos registrados.</div>
-}
-else
-{
-    <table class="table align-middle">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Categoría</th>
-                <th>Precio</th>
-                <th>Stock</th>
-                <th>Estado</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var p in Model)
+    <div class="tt-panel">
+
+        <div class="tt-panel-header">
+            <h3><i class="bi bi-box-seam-fill me-2"></i>Mis Productos</h3>
+            <a asp-action="Create" class="tt-btn-crear">
+                <i class="bi bi-plus-circle-fill me-2"></i>Nuevo Producto
+            </a>
+        </div>
+
+        <div class="tt-panel-body">
+
+            @if (TempData["Mensaje"] != null)
             {
-                <tr>
-                    <td>@p.Nombre</td>
-                    <td>@(p.Categoria?.Nombre ?? "—")</td>
-                    <td>S/ @p.Precio.ToString("0.00")</td>
-                    <td>@p.Stock</td>
-                    <td>
-                        <span class="mp-badge @(p.Activo ? "mp-activo" : "mp-inactivo")">
-                            @(p.Activo ? "Activo" : "Inactivo")
-                        </span>
-                    </td>
-                    <td>
-                        <form asp-action="CambiarActivo" asp-route-id="@p.Id" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-sm @(p.Activo ? "btn-outline-secondary" : "btn-outline-success")">
-                                @(p.Activo ? "Desactivar" : "Activar")
-                            </button>
-                        </form>
-                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Editar</a>
-                        <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">Eliminar</a>
-                        <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Detalles</a>
-                    </td>
-                </tr>
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
             }
-        </tbody>
-    </table>
-}
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            @if (!Model.Any())
+            {
+                <div class="tt-msg-vacio">
+                    Aún no tienes productos registrados. Crea el primero con el botón "Nuevo Producto".
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table align-middle tt-tabla">
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@(string.IsNullOrEmpty(p.ImagenUrl) ? "https://via.placeholder.com/60x60?text=Sin+img" : p.ImagenUrl)"
+                                             alt="@p.Nombre"
+                                             style="width:56px;height:56px;object-fit:cover;border-radius:8px;border:1px solid #f0e2dc;" />
+                                    </td>
+                                    <td class="text-start fw-semibold">@p.Nombre</td>
+                                    <td>@(p.Categoria?.Nombre ?? "—")</td>
+                                    <td>S/ @p.Precio.ToString("0.00")</td>
+                                    <td>@p.Stock</td>
+                                    <td>
+                                        <span class="tt-badge-estado @(p.Activo ? "tt-badge-activo" : "tt-badge-inactivo")">
+                                            @(p.Activo ? "Activo" : "Inactivo")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@p.Id" class="tt-btn-accion tt-accion-editar" title="Editar este producto">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@p.Id" class="tt-btn-accion tt-accion-detalles" title="Detalles">
+                                            <i class="bi bi-eye-fill"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@p.Id" class="tt-btn-accion tt-accion-eliminar" title="Eliminar">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </a>
+                                        <form asp-action="CambiarActivo" asp-route-id="@p.Id" method="post" style="display:inline-block; margin-left:6px;">
+                                            <button type="submit" class="tt-msg-btn @(p.Activo ? "tt-msg-btn-desmarcar" : "tt-msg-btn-marcar")">
+                                                @(p.Activo ? "Desactivar" : "Activar")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

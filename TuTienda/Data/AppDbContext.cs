@@ -20,6 +20,8 @@ namespace TuTienda.Data
         public DbSet<DetallePedido> DetallesPedido { get; set; }
         public DbSet<Mensaje> Mensajes { get; set; }
 
+        public DbSet<Contacto> Contactos { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

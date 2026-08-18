@@ -1,257 +1,81 @@
-
 @model IEnumerable<TuTienda.Models.Entities.Usuario>
 
 @{
     ViewData["Title"] = "Usuarios";
 }
 
-<style>
-    body {
-        background: linear-gradient(135deg, #1f2937, #111827);
-        min-height: 100vh;
-    }
-
-    .card {
-        border: none;
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 12px 35px rgba(0, 0, 0, .35);
-    }
-
-    .card-header {
-        background: linear-gradient(135deg, #991b1b, #dc2626);
-        padding: 18px 22px;
-    }
-
-        .card-header h3 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-    .card-body {
-        background: #fff;
-        padding: 25px;
-    }
-
-    .btn-create {
-        background: linear-gradient(135deg, #991b1b, #dc2626);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 18px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: .3s;
-    }
-
-        .btn-create:hover {
-            background: linear-gradient(135deg, #7f1d1d, #b91c1c);
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-    .table {
-        margin-top: 20px;
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-        .table thead {
-            background: #991b1b;
-            color: white;
-        }
-
-            .table thead th {
-                border: none;
-                padding: 15px;
-                text-align: center;
-            }
-
-        .table tbody td {
-            vertical-align: middle;
-            text-align: center;
-            padding: 14px;
-        }
-
-        .table tbody tr:hover {
-            background: #fef2f2;
-            transition: .3s;
-        }
-
-    .badge {
-        padding: 7px 12px;
-        font-size: .85rem;
-        border-radius: 20px;
-    }
-
-    .btn-action {
-        width: 36px;
-        height: 36px;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 50%;
-        color: white;
-        text-decoration: none;
-        margin: 0 3px;
-        transition: .3s;
-    }
-
-    .btn-edit {
-        background: #0d6efd;
-    }
-
-        .btn-edit:hover {
-            background: #0b5ed7;
-            transform: scale(1.1);
-            color: white;
-        }
-
-    .btn-details {
-        background: #198754;
-    }
-
-        .btn-details:hover {
-            background: #157347;
-            transform: scale(1.1);
-            color: white;
-        }
-
-    .btn-delete {
-        background: #dc2626;
-    }
-
-        .btn-delete:hover {
-            background: #b91c1c;
-            transform: scale(1.1);
-            color: white;
-        }
-
-    .alert-success {
-        border-left: 5px solid #198754;
-        border-radius: 12px;
-    }
-</style>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
 
 <div class="container py-4">
 
-    <div class="row justify-content-center">
+    <div class="tt-panel">
 
-        <div class="col-12">
+        <div class="tt-panel-header">
+            <h3><i class="bi bi-people-fill me-2"></i>Gestión de Usuarios</h3>
+            <a asp-action="Create" class="tt-btn-crear">
+                <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+            </a>
+        </div>
 
-            <div class="card">
+        <div class="tt-panel-body">
 
-                <div class="card-header text-white d-flex justify-content-between align-items-center">
-
-                    <h3>
-                        <i class="bi bi-people-fill me-2"></i>
-                        Gestión de Usuarios
-                    </h3>
-
-                    <a asp-action="Create" class="btn-create">
-                        <i class="bi bi-person-plus-fill me-2"></i>
-                        Nuevo Usuario
-                    </a>
-
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show">
+                    <i class="bi bi-check-circle-fill me-2"></i>@TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
+            }
 
-                <div class="card-body">
-
-                    @if (TempData["Mensaje"] != null)
-                    {
-                        <div class="alert alert-success alert-dismissible fade show">
-                            <i class="bi bi-check-circle-fill me-2"></i>
-                            @TempData["Mensaje"]
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    <div class="table-responsive">
-
-                        <table class="table table-hover align-middle">
-
-                            <thead>
-
-                                <tr>
-                                    <th>@Html.DisplayNameFor(model => model.Nombres)</th>
-                                    <th>@Html.DisplayNameFor(model => model.Apellidos)</th>
-                                    <th>@Html.DisplayNameFor(model => model.Email)</th>
-                                    <th>@Html.DisplayNameFor(model => model.RolId)</th>
-                                    <th>Estado</th>
-                                    <th>@Html.DisplayNameFor(model => model.NombreTienda)</th>
-                                    <th>Acciones</th>
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-
-                                        <td>@item.Nombres</td>
-
-                                        <td>@item.Apellidos</td>
-
-                                        <td>@item.Email</td>
-
-                                        <td>@item.RolId</td>
-
-                                        <td>
-                                            @if (item.Activo)
-                                            {
-                                                <span class="badge bg-success">
-                                                    Activo
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">
-                                                    Inactivo
-                                                </span>
-                                            }
-                                        </td>
-
-                                        <td>@item.NombreTienda</td>
-
-                                        <td>
-
-                                            <a asp-action="Edit"
-                                               asp-route-id="@item.Id"
-                                               class="btn-action btn-edit"
-                                               title="Editar">
-                                                <i class="bi bi-pencil-fill"></i>
-                                            </a>
-
-                                            <a asp-action="Details"
-                                               asp-route-id="@item.Id"
-                                               class="btn-action btn-details"
-                                               title="Detalles">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
-
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.Id"
-                                               class="btn-action btn-delete"
-                                               title="Eliminar">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </a>
-
-                                        </td>
-
-                                    </tr>
-                                }
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
+            <div class="table-responsive">
+                <table class="table table-hover align-middle tt-tabla">
+                    <thead>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Nombres)</th>
+                            <th>@Html.DisplayNameFor(model => model.Apellidos)</th>
+                            <th>@Html.DisplayNameFor(model => model.Email)</th>
+                            <th>@Html.DisplayNameFor(model => model.RolId)</th>
+                            <th>Estado</th>
+                            <th>@Html.DisplayNameFor(model => model.NombreTienda)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Nombres</td>
+                                <td>@item.Apellidos</td>
+                                <td>@item.Email</td>
+                                <td>@item.RolId</td>
+                                <td>
+                                    @if (item.Activo)
+                                    {
+                                        <span class="tt-badge-estado tt-badge-activo">Activo</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="tt-badge-estado tt-badge-inactivo">Inactivo</span>
+                                    }
+                                </td>
+                                <td>@item.NombreTienda</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="tt-btn-accion tt-accion-editar" title="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="tt-btn-accion tt-accion-detalles" title="Detalles">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="tt-btn-accion tt-accion-eliminar" title="Eliminar">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
 
         </div>
@@ -259,4 +83,3 @@
     </div>
 
 </div>
-

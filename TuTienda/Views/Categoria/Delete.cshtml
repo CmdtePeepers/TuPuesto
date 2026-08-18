@@ -5,29 +5,62 @@
     int cantidadProductos = ViewBag.CantidadProductos;
 }
 
-<h1>Eliminar Categoría</h1>
-
-@if (cantidadProductos > 0)
-{
-    <div class="alert alert-warning">
-        Esta categoría tiene <strong>@cantidadProductos producto(s)</strong> registrados.
-        No podrás eliminarla hasta que esos productos se reasignen a otra categoría o se eliminen.
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 }
-<h3>¿Estás seguro que deseas eliminar esta categoría?</h3>
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-    </dl>
+<div class="container py-4">
 
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Eliminar" class="btn btn-danger" disabled="@(cantidadProductos > 0)" /> |
-        <a asp-action="Index">Cancelar</a>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="tt-panel">
+
+                <div class="tt-panel-header tt-header-peligro">
+                    <h3><i class="bi bi-trash-fill me-2"></i>Eliminar Categoría</h3>
+                </div>
+
+                <div class="tt-panel-body">
+
+                    @if (cantidadProductos > 0)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Esta categoría tiene <strong>@cantidadProductos producto(s)</strong> registrados.
+                            No podrás eliminarla hasta que esos productos se reasignen a otra categoría o se eliminen.
+                        </div>
+                    }
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        ¿Estás seguro que deseas eliminar esta categoría? Esta acción no se puede deshacer.
+                    </div>
+
+                    <div class="tt-info-box tt-info-peligro">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
+                        </dl>
+                    </div>
+
+                    <hr />
+
+                    <form asp-action="Delete">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-dark"><i class="bi bi-arrow-left me-2"></i>Cancelar</a>
+                            <button type="submit" class="btn btn-danger" disabled="@(cantidadProductos > 0)"><i class="bi bi-trash-fill me-2"></i>Eliminar Categoría</button>
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
 </div>

@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 using TuTienda.Data;
 using TuTienda.Models;
+using TuTienda.Models.Entities;
+using TuTienda.Models.Enums;
 
 namespace TuTienda.Controllers
 {
@@ -17,6 +20,20 @@ namespace TuTienda.Controllers
 
         public async Task<IActionResult> Index()
         {
+            bool esVendedor = User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Vendedor");
+
+            if (esVendedor)
+            {
+                var vendedorId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+                ViewBag.EsVendedor = true;
+                ViewBag.TotalProductos = await _context.Productos.CountAsync(p => p.VendedorId == vendedorId);
+                ViewBag.ProductosActivos = await _context.Productos.CountAsync(p => p.VendedorId == vendedorId && p.Activo);
+                ViewBag.PedidosPendientes = await _context.Pedidos.CountAsync(p => p.VendedorId == vendedorId && p.Estado == EstadoPedido.Pendiente);
+
+                return View(new List<Producto>());
+            }
+
             var productos = await _context.Productos
                 .Where(p => p.Activo)
                 .Include(p => p.Categoria)
@@ -26,6 +43,7 @@ namespace TuTienda.Controllers
 
             return View(productos);
         }
+
         public IActionResult Nosotros()
         {
             bool esAdminOVendedor = User.Identity != null && User.Identity.IsAuthenticated

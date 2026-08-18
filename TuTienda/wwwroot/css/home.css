@@ -175,3 +175,675 @@
     background: var(--crema);
 }
 
+
+/* ===== Panel de gestión (Usuarios / Categorías) — mismo lenguaje visual que el Home ===== */
+
+.tt-panel {
+    border: 1px solid #f0e2dc;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    margin-bottom: 2rem;
+}
+
+.tt-panel-header {
+    background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo-oscuro) 100%);
+    color: #fff;
+    padding: 1.2rem 1.6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+    .tt-panel-header h3 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin: 0;
+        color: #fff;
+    }
+
+    .tt-panel-header.tt-header-peligro {
+        background: linear-gradient(135deg, var(--rojo-oscuro) 0%, var(--rojo-profundo) 100%);
+    }
+
+.tt-panel-body {
+    padding: 1.8rem;
+}
+
+.tt-btn-crear {
+    background: var(--amarillo);
+    color: var(--rojo-profundo);
+    border: none;
+    padding: 0.65rem 1.3rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+    .tt-btn-crear:hover {
+        background: #ffd965;
+        color: var(--rojo-profundo);
+    }
+
+/* Tabla de listado */
+.tt-tabla {
+    margin-top: 0.5rem;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .tt-tabla thead th {
+        background-color: var(--rojo-profundo) !important;
+        color: #fff !important;
+        border: none;
+        padding: 0.9rem;
+        text-align: center;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .tt-tabla tbody td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 0.85rem;
+    }
+
+    .tt-tabla tbody tr:hover {
+        background: var(--crema);
+    }
+
+.tt-badge-estado {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.tt-badge-activo {
+    background: #D4F7DC;
+    color: #146c2e;
+}
+
+.tt-badge-inactivo {
+    background: #FFE0E0;
+    color: #A8172A;
+}
+
+/* Botones circulares de acción */
+.tt-btn-accion {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    margin: 0 3px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+    .tt-btn-accion:hover {
+        transform: scale(1.08);
+        color: #fff;
+        opacity: 0.9;
+    }
+
+.tt-accion-editar {
+    background: var(--rojo);
+}
+
+.tt-accion-detalles {
+    background: var(--naranja);
+}
+
+.tt-accion-eliminar {
+    background: var(--rojo-profundo);
+}
+
+/* Formularios (Create / Edit) */
+.tt-panel-body .form-label,
+.tt-form-label {
+    font-weight: 600;
+    color: var(--rojo-profundo);
+    font-size: 0.88rem;
+    margin-bottom: 0.35rem;
+    display: inline-block;
+}
+
+.tt-panel-body .form-control,
+.tt-panel-body .form-select {
+    border: 1.5px solid #f0d9d2;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.92rem;
+}
+
+    .tt-panel-body .form-control:focus,
+    .tt-panel-body .form-select:focus {
+        border-color: var(--rojo);
+        box-shadow: 0 0 0 3px rgba(232, 40, 63, 0.1);
+    }
+
+.tt-panel-body .form-check-input:checked {
+    background-color: var(--rojo);
+    border-color: var(--rojo);
+}
+
+.tt-form-seccion {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: var(--rojo-profundo);
+    font-size: 1.05rem;
+    font-weight: 700;
+    border-left: 4px solid var(--rojo);
+    padding-left: 0.7rem;
+    margin-bottom: 1.2rem;
+}
+
+.tt-panel-body .btn-primary {
+    background: var(--rojo);
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.6rem;
+    font-weight: 700;
+}
+
+    .tt-panel-body .btn-primary:hover {
+        background: var(--rojo-oscuro);
+    }
+
+.tt-panel-body .btn-danger {
+    background: var(--rojo-profundo);
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.6rem;
+    font-weight: 700;
+}
+
+    .tt-panel-body .btn-danger:hover {
+        background: #4d0a13;
+    }
+
+.tt-panel-body .btn-dark {
+    background: #6b6656;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.6rem;
+    font-weight: 700;
+}
+
+    .tt-panel-body .btn-dark:hover {
+        background: #524e42;
+    }
+
+.tt-panel-body .alert-danger {
+    border-left: 5px solid var(--rojo);
+    border-radius: 10px;
+}
+
+.tt-panel-body .alert-warning {
+    background: #FFF7F2;
+    border-left: 5px solid var(--naranja);
+    color: #8a5a1f;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.tt-panel-body .alert-success {
+    border-left: 5px solid #146c2e;
+    border-radius: 10px;
+}
+
+.tt-panel-body hr {
+    margin: 1.6rem 0;
+    border-top: 2px solid #f0e2dc;
+}
+
+/* Bloque de detalles (Details / Delete) */
+.tt-info-box {
+    background: var(--crema);
+    border-left: 5px solid var(--rojo);
+    border-radius: 10px;
+    padding: 1.4rem 1.6rem;
+}
+
+    .tt-info-box.tt-info-peligro {
+        border-left-color: var(--rojo-profundo);
+    }
+
+    .tt-info-box dt {
+        color: var(--rojo-profundo);
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .tt-info-box dd {
+        color: #2b2b2b;
+        margin-bottom: 0.9rem;
+    }
+
+
+/* ===== Panel de Reportes ===== */
+
+.tt-rep-header {
+    margin-bottom: 1.8rem;
+}
+
+.tt-rep-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem;
+}
+
+.tt-rep-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    background: #fff;
+    border: 1.5px solid #f0e2dc;
+    border-radius: 12px;
+    padding: 1.6rem 1.5rem;
+    text-decoration: none;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+    .tt-rep-card:hover {
+        box-shadow: 0 10px 24px rgba(232, 40, 63, 0.14);
+        transform: translateY(-3px);
+        border-color: var(--rojo);
+    }
+
+.tt-rep-icono {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo-oscuro) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.tt-rep-titulo {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2b2b2b;
+}
+
+.tt-rep-desc {
+    font-size: 0.85rem;
+    color: #8a8574;
+    line-height: 1.45;
+}
+
+.tt-rep-flecha {
+    margin-top: auto;
+    align-self: flex-end;
+    color: var(--rojo);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ===== Bandeja de Mensajes de contacto ===== */
+
+.tt-msg-vacio {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #a68f89;
+    border: 1.5px dashed #f0d9d2;
+    border-radius: 10px;
+    background: var(--crema);
+}
+
+table.tt-msg-tabla thead {
+    background: var(--rojo-profundo);
+}
+
+    table.tt-msg-tabla thead th {
+        background: var(--rojo-profundo);
+        border: none;
+        padding: 0.9rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: #fff !important;
+    }
+
+.tt-msg-tabla {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .tt-msg-tabla tbody td {
+        vertical-align: middle;
+        padding: 0.9rem;
+    }
+
+    .tt-msg-tabla tbody tr:hover {
+        background: var(--crema);
+    }
+
+.tt-msg-mensaje {
+    max-width: 300px;
+    color: #4a4a4a;
+    font-size: 0.9rem;
+}
+
+.tt-msg-motivo {
+    display: inline-block;
+    background: #FFF7F2;
+    color: var(--rojo-oscuro);
+    border: 1px solid #f0d9d2;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.tt-msg-badge {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 20px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.tt-msg-pendiente {
+    background: #FFF3CD;
+    color: #8a6d00;
+}
+
+.tt-msg-atendido {
+    background: #D4F7DC;
+    color: #146c2e;
+}
+
+.tt-msg-btn {
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
+    border: 1.5px solid;
+}
+
+.tt-msg-btn-marcar {
+    color: #146c2e;
+    border-color: #146c2e;
+    background: #fff;
+}
+
+    .tt-msg-btn-marcar:hover {
+        background: #146c2e;
+        color: #fff;
+    }
+
+.tt-msg-btn-desmarcar {
+    color: #6b6656;
+    border-color: #d9d2c8;
+    background: #fff;
+}
+
+    .tt-msg-btn-desmarcar:hover {
+        background: #6b6656;
+        color: #fff;
+    }
+
+/* ===== Catálogo público (Index / Listado) ===== */
+.tt-buscador {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+}
+
+    .tt-buscador input[type="text"],
+    .tt-buscador input[type="number"] {
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+
+    .tt-buscador input[type="text"] {
+        flex: 1;
+    }
+
+    .tt-buscador input[type="number"] {
+        width: 160px;
+    }
+
+    .tt-buscador button {
+        background: var(--rojo);
+        color: #fff;
+        border: none;
+        padding: 0.7rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .tt-buscador button:hover {
+            background: var(--rojo-oscuro);
+        }
+
+.tt-card-desc {
+    color: #8a8574;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tt-card-stock {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+}
+
+.tt-stock-si {
+    color: #146c2e;
+}
+
+.tt-stock-no {
+    color: var(--rojo-oscuro);
+}
+
+.tt-card-btn {
+    display: block;
+    width: 100%;
+    background: var(--rojo);
+    color: #fff;
+    border: none;
+    padding: 0.55rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+    .tt-card-btn:hover {
+        background: var(--rojo-oscuro);
+        color: #fff;
+    }
+
+.tt-card-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    margin-top: 0.5rem;
+}
+
+    .tt-card-links a {
+        color: #6b6656;
+        text-decoration: none;
+    }
+
+        .tt-card-links a:hover {
+            color: var(--rojo-oscuro);
+            text-decoration: underline;
+        }
+
+.tt-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.tt-ver-todos {
+    color: var(--rojo);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+    .tt-ver-todos:hover {
+        text-decoration: underline;
+    }
+
+.tt-volver {
+    display: inline-block;
+    margin-bottom: 0.8rem;
+    color: var(--rojo-oscuro);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .tt-volver:hover {
+        text-decoration: underline;
+    }
+
+/* ===== Detalle de producto (Details) ===== */
+.tt-detalle-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2rem;
+}
+
+.tt-detalle-img {
+    border: 1px solid #f0e2dc;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--crema);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+    .tt-detalle-img img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+    }
+
+.tt-detalle-precio {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--rojo-oscuro);
+    margin-bottom: 0.6rem;
+}
+
+.tt-btn-contactar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    color: #146c2e;
+    border: 1.5px solid #25D366;
+    padding: 0.7rem 1.3rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+    .tt-btn-contactar:hover {
+        background: #eafff1;
+        color: #146c2e;
+    }
+
+    .tt-btn-contactar img {
+        width: 18px;
+        height: 18px;
+    }
+
+.tt-buscador {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+    .tt-buscador input[type="text"] {
+        flex: 1;
+        min-width: 220px;
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
+
+    .tt-buscador select {
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #fff;
+        min-width: 190px;
+    }
+
+    .tt-buscador button {
+        background: var(--rojo);
+        color: #fff;
+        border: none;
+        padding: 0.7rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .tt-buscador button:hover {
+            background: var(--rojo-oscuro);
+        }
+
+.tt-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tt-ver-todos {
+    color: var(--rojo);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+    .tt-ver-todos:hover {
+        text-decoration: underline;
+    }
+
+.tt-stock-no {
+    color: var(--rojo-oscuro);
+    font-weight: 700;
+}

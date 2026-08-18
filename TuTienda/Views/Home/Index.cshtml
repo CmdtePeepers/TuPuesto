@@ -28,7 +28,14 @@
             }
         </p>
         <div class="tt-acciones">
-            <a class="tt-btn-primario" asp-controller="Producto" asp-action="Index">Ver productos</a>
+            @if (User.IsInRole("Vendedor"))
+            {
+                <a class="tt-btn-primario" asp-controller="Producto" asp-action="Mantenimiento">Mis productos</a>
+            }
+            else
+            {
+                <a class="tt-btn-primario" asp-controller="Producto" asp-action="Index">Ver productos</a>
+            }
             <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
                 <button type="submit" class="tt-btn-secundario">Cerrar sesión</button>
             </form>
@@ -46,27 +53,75 @@
     }
 </div>
 
-<h2 class="tt-seccion-titulo">Productos recientes</h2>
-
-@if (!Model.Any())
+@if (ViewBag.EsVendedor == true)
 {
-    <div class="tt-vacio">
-        Aún no hay productos publicados. Cuando los vendedores empiecen a subir productos, aparecerán aquí.
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">@ViewBag.ProductosActivos</div>
+                <div class="text-muted" style="font-size:0.85rem;">Productos activos (@ViewBag.TotalProductos en total)</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">@ViewBag.PedidosPendientes</div>
+                <div class="text-muted" style="font-size:0.85rem;">Pedidos pendientes de atender</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">🏪</div>
+                <div class="text-muted" style="font-size:0.85rem;">Tu tienda ya está publicada</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="tt-seccion-titulo">Accesos rápidos</h2>
+    <div class="tt-rep-grid">
+        <a asp-controller="Producto" asp-action="Mantenimiento" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-box-seam-fill"></i></div>
+            <div class="tt-rep-titulo">Mis Productos</div>
+            <div class="tt-rep-desc">Crea, edita y activa o desactiva tu catálogo.</div>
+            <div class="tt-rep-flecha">Gestionar →</div>
+        </a>
+        <a asp-controller="Pedido" asp-action="Gestionar" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-receipt"></i></div>
+            <div class="tt-rep-titulo">Pedidos recibidos</div>
+            <div class="tt-rep-desc">Confirma, entrega o cancela tus pedidos.</div>
+            <div class="tt-rep-flecha">Ver pedidos →</div>
+        </a>
+        <a asp-controller="Mensaje" asp-action="Index" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-chat-dots-fill"></i></div>
+            <div class="tt-rep-titulo">Mensajes</div>
+            <div class="tt-rep-desc">Responde las consultas de tus clientes.</div>
+            <div class="tt-rep-flecha">Ver mensajes →</div>
+        </a>
     </div>
 }
 else
 {
-    <div class="tt-grid">
-        @foreach (var producto in Model)
-        {
-            <div class="tt-card">
-                <img class="tt-card-img" src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/300x200?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
-                <div class="tt-card-body">
-                    <div class="tt-card-categoria">@(producto.Categoria?.Nombre ?? "Sin categoría")</div>
-                    <div class="tt-card-nombre">@producto.Nombre</div>
-                    <div class="tt-card-precio">S/ @producto.Precio.ToString("0.00")</div>
+    <h2 class="tt-seccion-titulo">Productos recientes</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="tt-vacio">
+            Aún no hay productos publicados. Cuando los vendedores empiecen a subir productos, aparecerán aquí.
+        </div>
+    }
+    else
+    {
+        <div class="tt-grid">
+            @foreach (var producto in Model)
+            {
+                <div class="tt-card">
+                    <img class="tt-card-img" src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/300x200?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
+                    <div class="tt-card-body">
+                        <div class="tt-card-categoria">@(producto.Categoria?.Nombre ?? "Sin categoría")</div>
+                        <div class="tt-card-nombre">@producto.Nombre</div>
+                        <div class="tt-card-precio">S/ @producto.Precio.ToString("0.00")</div>
+                    </div>
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }
 }

@@ -2,59 +2,42 @@
     ViewData["Title"] = "Mensajes";
     var conversaciones = ViewBag.Conversaciones;
 }
+<link rel="stylesheet" href="~/css/mensajesList.css" asp-append-version="true" />
 
-<style>
-    .conv-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.2rem;
-        border: 1px solid #f0e2dc;
-        border-radius: 10px;
-        margin-bottom: 0.7rem;
-        text-decoration: none;
-        color: inherit;
-        transition: background 0.1s ease;
-    }
-    .conv-item:hover { background: #FFF7F2; color: inherit; }
-    .conv-nombre { font-weight: 700; }
-    .conv-preview { color: #6b6656; font-size: 0.88rem; margin-top: 0.2rem; }
-    .conv-badge {
-        background: #E8283F;
-        color: #fff;
-        border-radius: 50%;
-        width: 22px;
-        height: 22px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        font-weight: 700;
-    }
-</style>
+<div class="container py-4">
+    <div class="ml-header">
+        <h1 class="ml-titulo">Mensajes</h1>
+        <div class="ml-subtitulo">Tus conversaciones con clientes y vendedores, en un solo lugar.</div>
+    </div>
 
-<h1>Mensajes</h1>
-
-@if (conversaciones == null || conversaciones.Count == 0)
-{
-    <div class="alert alert-light border">No tienes conversaciones todavía.</div>
-}
-else
-{
-    foreach (var c in conversaciones)
+    @if (conversaciones == null || conversaciones.Count == 0)
     {
-        <a class="conv-item" asp-action="Conversacion" asp-route-id="@c.OtroUsuarioId">
-            <div>
-                <div class="conv-nombre">@c.OtroUsuarioNombre</div>
-                <div class="conv-preview">@c.UltimoMensaje</div>
-            </div>
-            <div class="text-end">
-                <div class="text-muted" style="font-size:0.8rem;">@(((DateTime)c.Fecha).ToString("dd/MM HH:mm"))</div>
-                @if (c.NoLeidos > 0)
-                {
-                    <span class="conv-badge">@c.NoLeidos</span>
-                }
-            </div>
-        </a>
+        <div class="ml-vacio">
+            <div class="ml-vacio-icono">💬</div>
+            Aún no tienes conversaciones. Cuando alguien te escriba, aparecerá aquí.
+        </div>
     }
-}
+    else
+    {
+        foreach (var c in conversaciones)
+        {
+            bool noLeido = c.NoLeidos > 0;
+            string inicial = string.IsNullOrEmpty(c.OtroUsuarioNombre) ? "?" : c.OtroUsuarioNombre.Substring(0, 1).ToUpper();
+
+            <a class="ml-item @(noLeido ? "ml-no-leido" : "")" asp-action="Conversacion" asp-route-id="@c.OtroUsuarioId">
+                <div class="ml-avatar">@inicial</div>
+                <div class="ml-info">
+                    <div class="ml-nombre">@c.OtroUsuarioNombre</div>
+                    <div class="ml-preview">@c.UltimoMensaje</div>
+                </div>
+                <div class="ml-meta">
+                    <div class="ml-fecha">@(((DateTime)c.Fecha).ToString("dd/MM HH:mm"))</div>
+                    @if (noLeido)
+                    {
+                        <span class="ml-badge">@c.NoLeidos</span>
+                    }
+                </div>
+            </a>
+        }
+    }
+</div>

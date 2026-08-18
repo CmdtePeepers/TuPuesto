@@ -1,0 +1,346 @@
+﻿@model TuTienda.Models.Entities.Contacto
+
+@{
+    ViewData["Title"] = "Contáctanos";
+}
+
+<style>
+    .ct-hero {
+        background: linear-gradient(135deg, #E8283F 0%, #A8172A 55%, #6E0F1D 100%);
+        color: #fff;
+        border-radius: 14px;
+        padding: 3rem 2.5rem;
+        margin-bottom: 2.5rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ct-hero::after {
+            content: "";
+            position: absolute;
+            top: -70px;
+            right: -70px;
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle, rgba(255,201,60,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+    .ct-hero-eyebrow {
+        font-size: 0.78rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #FFC93C;
+        font-weight: 700;
+        margin-bottom: 0.7rem;
+        position: relative;
+    }
+
+    .ct-hero h1 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0 0 0.9rem;
+        position: relative;
+    }
+
+    .ct-hero p {
+        max-width: 620px;
+        margin: 0 auto 1.6rem;
+        color: #FFE1D6;
+        line-height: 1.6;
+        position: relative;
+    }
+
+    .ct-btn-hero {
+        background: #FFC93C;
+        color: #6E0F1D;
+        border: none;
+        padding: 0.85rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.15s ease;
+    }
+
+        .ct-btn-hero:hover {
+            background: #ffd965;
+        }
+
+    .ct-seccion-titulo {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2b2b2b;
+        border-left: 4px solid #E8283F;
+        padding-left: 0.7rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .ct-beneficios {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.1rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .ct-beneficio {
+        border: 1px solid #f0e2dc;
+        border-radius: 12px;
+        padding: 1.4rem;
+        text-align: center;
+        background: #fff;
+        transition: box-shadow 0.15s ease, transform 0.15s ease;
+    }
+
+        .ct-beneficio:hover {
+            box-shadow: 0 6px 16px rgba(232,40,63,0.1);
+            transform: translateY(-2px);
+        }
+
+    .ct-beneficio-icono {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #E8283F, #A8172A);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        margin: 0 auto 0.8rem;
+    }
+
+    .ct-beneficio h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2b2b2b;
+        margin-bottom: 0.4rem;
+    }
+
+    .ct-beneficio p {
+        font-size: 0.85rem;
+        color: #8a8574;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .ct-otra-consulta {
+        background: #FFF7F2;
+        border: 1.5px dashed #f0d9d2;
+        border-radius: 12px;
+        padding: 1.8rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+        .ct-otra-consulta h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2b2b2b;
+            margin-bottom: 0.5rem;
+        }
+
+        .ct-otra-consulta p {
+            color: #8a8574;
+            font-size: 0.9rem;
+            margin-bottom: 1.1rem;
+        }
+
+    .ct-btn-outline {
+        background: #fff;
+        color: #A8172A;
+        border: 1.5px solid #E8283F;
+        padding: 0.6rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+        .ct-btn-outline:hover {
+            background: #FFF0EE;
+        }
+
+    /* Modal del formulario */
+    .ct-modal-header {
+        border-bottom: 1px solid #f0e2dc;
+    }
+
+    .ct-modal-titulo {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-weight: 700;
+        color: #2b2b2b;
+    }
+
+    .ct-campo {
+        margin-bottom: 1.1rem;
+    }
+
+        .ct-campo label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #2b2b2b;
+            margin-bottom: 0.35rem;
+        }
+
+        .ct-campo input, .ct-campo select, .ct-campo textarea {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            border: 1.5px solid #f0d9d2;
+            border-radius: 8px;
+            font-size: 0.92rem;
+        }
+
+    .ct-btn-enviar {
+        background: #E8283F;
+        color: #fff;
+        border: none;
+        padding: 0.75rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+    }
+
+        .ct-btn-enviar:hover {
+            background: #A8172A;
+        }
+</style>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">@TempData["Mensaje"]</div>
+}
+
+<div class="ct-hero">
+    <div class="ct-hero-eyebrow">Únete como vendedor</div>
+    <h1>Convierte tus productos en ventas reales</h1>
+    <p>Miles de compradores buscan todos los días en TuTienda. Solicita tus credenciales de vendedor y empieza a publicar tu catálogo en minutos.</p>
+    <button type="button" class="ct-btn-hero" onclick="abrirFormulario('Quiero ser vendedor')">
+        🚀 Solicitar credenciales de vendedor
+    </button>
+</div>
+
+<h2 class="ct-seccion-titulo">¿Por qué vender en TuTienda?</h2>
+<div class="ct-beneficios">
+    <div class="ct-beneficio">
+        <div class="ct-beneficio-icono">🛍️</div>
+        <h4>Alcance masivo</h4>
+        <p>Tu tienda visible para todos los compradores de la plataforma, sin costo de publicación.</p>
+    </div>
+    <div class="ct-beneficio">
+        <div class="ct-beneficio-icono">⚙️</div>
+        <h4>Panel propio</h4>
+        <p>Gestiona tus productos, activa o desactiva tu inventario cuando quieras.</p>
+    </div>
+    <div class="ct-beneficio">
+        <div class="ct-beneficio-icono">📦</div>
+        <h4>Pedidos organizados</h4>
+        <p>Cada venta llega directo a tu panel de pedidos, lista para confirmar y entregar.</p>
+    </div>
+    <div class="ct-beneficio">
+        <div class="ct-beneficio-icono">💬</div>
+        <h4>Contacto directo</h4>
+        <p>Chatea con tus compradores para resolver dudas antes y después de la venta.</p>
+    </div>
+</div>
+
+<div class="ct-otra-consulta">
+    <h3>¿Tienes otra consulta?</h3>
+    <p>Soporte técnico, dudas generales o cualquier otro tema — también puedes escribirnos.</p>
+    <button type="button" class="ct-btn-outline" onclick="abrirFormulario('')">
+        ✉️ Enviar otra consulta
+    </button>
+</div>
+
+<!-- Modal del formulario -->
+<div class="modal fade" id="modalContacto" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header ct-modal-header">
+                <h5 class="ct-modal-titulo" id="modalTitulo">Contáctanos</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Contactanos" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="ct-campo">
+                        <label asp-for="Nombre">Nombre completo</label>
+                        <input asp-for="Nombre" placeholder="Tu nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+
+                    <div class="ct-campo">
+                        <label asp-for="Email">Correo electrónico</label>
+                        <input asp-for="Email" placeholder="tucorreo@ejemplo.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="ct-campo">
+                        <label asp-for="Telefono">Teléfono (opcional)</label>
+                        <input asp-for="Telefono" placeholder="999 999 999" />
+                    </div>
+
+                    <div class="ct-campo">
+                        <label asp-for="Motivo">Motivo</label>
+                        <select asp-for="Motivo" id="selectMotivo">
+                            <option value="">-- Selecciona un motivo --</option>
+                            <option value="Quiero ser vendedor">Quiero ser vendedor</option>
+                            <option value="Consulta general">Consulta general</option>
+                            <option value="Reportar un problema">Reportar un problema</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                        <span asp-validation-for="Motivo" class="text-danger"></span>
+                    </div>
+
+                    <div class="ct-campo">
+                        <label asp-for="Mensaje">Tu mensaje</label>
+                        <textarea asp-for="Mensaje" rows="4" placeholder="Cuéntanos con más detalle..."></textarea>
+                        <span asp-validation-for="Mensaje" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="ct-btn-enviar">Enviar mensaje</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function abrirFormulario(motivoPreseleccionado) {
+            const select = document.getElementById('selectMotivo');
+            const titulo = document.getElementById('modalTitulo');
+
+            if (motivoPreseleccionado) {
+                select.value = motivoPreseleccionado;
+                titulo.textContent = 'Solicitar credenciales de vendedor';
+            } else {
+                select.value = '';
+                titulo.textContent = 'Contáctanos';
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('modalContacto'));
+            modal.show();
+        }
+
+        // Si el formulario falló la validación en el servidor, reabrimos el modal automáticamente
+        @if (!ViewData.ModelState.IsValid && Context.Request.Method == "POST")
+            {
+                <text>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            new bootstrap.Modal(document.getElementById('modalContacto')).show();
+                            });
+                </text>
+        }
+    </script>
+}

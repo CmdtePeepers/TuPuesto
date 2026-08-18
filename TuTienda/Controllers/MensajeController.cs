@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using TuTienda.Data;
-using TuTienda.Models.Entities;
 
 namespace TuTienda.Controllers
 {
@@ -22,8 +21,6 @@ namespace TuTienda.Controllers
             return int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         }
 
-        // Determina quién es Cliente y quién es Vendedor entre el usuario actual y el otro.
-        // Solo se permite chatear Cliente <-> Vendedor (no Cliente-Cliente ni Vendedor-Vendedor).
         private async Task<(int clienteId, int vendedorId)?> ResolverParticipantes(int otroUsuarioId)
         {
             var miId = ObtenerUsuarioId();
@@ -35,10 +32,10 @@ namespace TuTienda.Controllers
                 return null;
             }
 
-            if (yo.RolId == 3 && otro.RolId == 2) return (yo.Id, otro.Id);   // yo Cliente, otro Vendedor
-            if (yo.RolId == 2 && otro.RolId == 3) return (otro.Id, yo.Id);   // yo Vendedor, otro Cliente
+            if (yo.RolId == 3 && otro.RolId == 2) return (yo.Id, otro.Id);
+            if (yo.RolId == 2 && otro.RolId == 3) return (otro.Id, yo.Id);
 
-            return null; // combinación no permitida
+            return null;
         }
 
         // GET: Mensaje -> lista de conversaciones del usuario logueado
@@ -54,7 +51,6 @@ namespace TuTienda.Controllers
                 .OrderByDescending(m => m.FechaEnvio)
                 .ToListAsync();
 
-            // Agrupamos por "el otro participante" y tomamos el último mensaje de cada uno
             var conversaciones = mensajes
                 .GroupBy(m => esCliente ? m.VendedorId : m.ClienteId)
                 .Select(g => new
@@ -74,7 +70,7 @@ namespace TuTienda.Controllers
             return View();
         }
 
-        // GET: Mensaje/Conversacion/5 (5 = Id del otro usuario)
+        // GET: Mensaje/Conversacion/5
         public async Task<IActionResult> Conversacion(int id, int? productoId, int? pedidoId)
         {
             var participantes = await ResolverParticipantes(id);
@@ -93,7 +89,6 @@ namespace TuTienda.Controllers
                 .OrderBy(m => m.FechaEnvio)
                 .ToListAsync();
 
-            // Marcamos como leídos los que me llegaron a mí
             var noLeidos = mensajes.Where(m => !m.Leido && m.EmisorId != miId).ToList();
             foreach (var m in noLeidos)
             {
@@ -112,7 +107,6 @@ namespace TuTienda.Controllers
             ViewBag.ProductoId = productoId;
             ViewBag.PedidoId = pedidoId;
 
-            // Mensaje sugerido si viene de "Contactar sobre producto" o "Anular pedido"
             if (productoId.HasValue)
             {
                 var producto = await _context.Productos.FindAsync(productoId.Value);
@@ -126,39 +120,6 @@ namespace TuTienda.Controllers
             }
 
             return View(mensajes);
-        }
-
-        // POST: Mensaje/Enviar
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Enviar(int otroUsuarioId, string contenido, int? productoId, int? pedidoId)
-        {
-            if (string.IsNullOrWhiteSpace(contenido))
-            {
-                return RedirectToAction(nameof(Conversacion), new { id = otroUsuarioId, productoId, pedidoId });
-            }
-
-            var participantes = await ResolverParticipantes(otroUsuarioId);
-            if (participantes == null)
-            {
-                return Forbid();
-            }
-
-            var (clienteId, vendedorId) = participantes.Value;
-
-            _context.Mensajes.Add(new Mensaje
-            {
-                ClienteId = clienteId,
-                VendedorId = vendedorId,
-                EmisorId = ObtenerUsuarioId(),
-                Contenido = contenido.Trim(),
-                ProductoId = productoId,
-                PedidoId = pedidoId
-            });
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Conversacion), new { id = otroUsuarioId });
         }
     }
 }

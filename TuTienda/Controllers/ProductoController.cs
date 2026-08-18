@@ -22,17 +22,13 @@ namespace TuTienda.Controllers
             this.productoRepository = productoRepository;
         }
 
-        // Helper: obtiene el Id del usuario logueado desde la cookie de autenticación
         private int? ObtenerUsuarioId()
         {
             var valor = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return int.TryParse(valor, out var id) ? id : null;
         }
 
-        private bool EsAdministrador() => User.IsInRole("Administrador");
-        private bool EsVendedor() => User.IsInRole("Vendedor");
-
-        // GET: Producto  -> Vitrina: buscador + 4 productos por categoría
+        // GET: Producto -> Vitrina pública (solo activos)
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Index()
@@ -58,30 +54,29 @@ namespace TuTienda.Controllers
                 });
             }
 
+            // Para el dropdown del buscador principal
+            ViewBag.CategoriasFiltro = new SelectList(_context.Categorias.OrderBy(c => c.Nombre), "Id", "Nombre");
+
             return View(secciones);
         }
 
-        // GET: Producto/Mantenimiento : Vendedor/Admin ven TODOS sus productos
-        [Authorize(Roles = "Administrador,Vendedor")]
+        // GET: Producto/Mantenimiento -> Exclusivo del Vendedor, sobre SUS productos
+        [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Mantenimiento()
         {
-            IQueryable<Producto> query = _context.Productos
+            var usuarioId = ObtenerUsuarioId();
+
+            var productos = await _context.Productos
                 .Include(p => p.Categoria)
-                .Include(p => p.Vendedor)
-                .OrderBy(p => p.Nombre);
+                .Where(p => p.VendedorId == usuarioId)
+                .OrderBy(p => p.Nombre)
+                .ToListAsync();
 
-            if (!EsAdministrador())
-            {
-                var usuarioId = ObtenerUsuarioId();
-                query = query.Where(p => p.VendedorId == usuarioId);
-            }
-
-            var productos = await query.ToListAsync();
             return View(productos);
         }
 
-        // POST: Producto/CambiarActivo/5 :  activa/desactiva con un clic,
-        [Authorize(Roles = "Administrador,Vendedor")]
+        // POST: Producto/CambiarActivo/5
+        [Authorize(Roles = "Vendedor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarActivo(int id)
@@ -92,7 +87,7 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
+            if (producto.VendedorId != ObtenerUsuarioId())
             {
                 return Forbid();
             }
@@ -104,9 +99,9 @@ namespace TuTienda.Controllers
             return RedirectToAction(nameof(Mantenimiento));
         }
 
-        // GET: Producto/Categoria/5 : Todos los productos de una categoría (paginado)
+        // GET: Producto/Categoria/5
         [AllowAnonymous]
-        public async Task<IActionResult> Categoria(int id, string? nombre, decimal precioMin = 0, int paginaActual = 1, int elementosPorPagina = 8)
+        public async Task<IActionResult> Categoria(int id, string? nombre, int paginaActual = 1, int elementosPorPagina = 8)
         {
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria == null)
@@ -114,39 +109,49 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            var lista = await productoRepository.ObtenerProductosPaginados(nombre ?? "", precioMin, id, paginaActual, elementosPorPagina);
+            var lista = await productoRepository.ObtenerProductosPaginados(nombre ?? "", 0, id, paginaActual, elementosPorPagina);
 
             ViewBag.Titulo = categoria.Nombre;
             ViewBag.CategoriaId = id;
             ViewBag.Nombre = nombre;
-            ViewBag.PrecioMin = precioMin;
             ViewBag.PaginaActual = paginaActual;
             ViewBag.ElementosPorPagina = elementosPorPagina;
             ViewBag.TotalPaginas = (int)Math.Ceiling((double)lista.totalRegistros / elementosPorPagina);
             ViewBag.TotalRegistros = lista.totalRegistros;
+            ViewBag.CategoriasFiltro = new SelectList(_context.Categorias.OrderBy(c => c.Nombre), "Id", "Nombre", id);
 
             return View("Listado", lista.productos);
         }
 
-        // GET: Producto/Buscar -> Resultados de búsqueda en TODAS las categorías
+        // GET: Producto/Buscar -> combina nombre + categoría
         [AllowAnonymous]
-        public async Task<IActionResult> Buscar(string nombre, decimal precioMin = 0, int paginaActual = 1, int elementosPorPagina = 8)
+        public async Task<IActionResult> Buscar(string nombre, int categoriaId = 0, int paginaActual = 1, int elementosPorPagina = 8)
         {
-            var lista = await productoRepository.ObtenerProductosPaginados(nombre ?? "", precioMin, 0, paginaActual, elementosPorPagina);
+            var lista = await productoRepository.ObtenerProductosPaginados(nombre ?? "", 0, categoriaId, paginaActual, elementosPorPagina);
 
-            ViewBag.Titulo = string.IsNullOrWhiteSpace(nombre) ? "Todos los productos" : $"Resultados para \"{nombre}\"";
-            ViewBag.CategoriaId = 0;
+            string tituloBase = string.IsNullOrWhiteSpace(nombre) ? "Todos los productos" : $"Resultados para \"{nombre}\"";
+            if (categoriaId > 0)
+            {
+                var categoria = await _context.Categorias.FindAsync(categoriaId);
+                if (categoria != null)
+                {
+                    tituloBase += $" en {categoria.Nombre}";
+                }
+            }
+
+            ViewBag.Titulo = tituloBase;
+            ViewBag.CategoriaId = categoriaId;
             ViewBag.Nombre = nombre;
-            ViewBag.PrecioMin = precioMin;
             ViewBag.PaginaActual = paginaActual;
             ViewBag.ElementosPorPagina = elementosPorPagina;
             ViewBag.TotalPaginas = (int)Math.Ceiling((double)lista.totalRegistros / elementosPorPagina);
             ViewBag.TotalRegistros = lista.totalRegistros;
+            ViewBag.CategoriasFiltro = new SelectList(_context.Categorias.OrderBy(c => c.Nombre), "Id", "Nombre", categoriaId);
 
             return View("Listado", lista.productos);
         }
 
-        // GET: Producto/Details/5 -> PÚBLICO
+        // GET: Producto/Details/5 -> público
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
@@ -167,36 +172,23 @@ namespace TuTienda.Controllers
             return View(producto);
         }
 
-        // GET: Producto/Create -> Vendedor o Administrador
-        [Authorize(Roles = "Administrador,Vendedor")]
+        // GET: Producto/Create
+        [Authorize(Roles = "Vendedor")]
         [HttpGet]
         public IActionResult Create()
         {
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre");
-
-            if (EsAdministrador())
-            {
-                // El admin sí elige a qué vendedor pertenece el producto
-                ViewBag.VendedorId = new SelectList(_context.Usuarios.Where(u => u.RolId == 2), "Id", "Nombres");
-            }
-
             return View();
         }
 
-        // POST: Producto/Create -> Vendedor o Administrador
-        [Authorize(Roles = "Administrador,Vendedor")]
+        // POST: Producto/Create
+        [Authorize(Roles = "Vendedor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Producto producto)
         {
-            // Si es Vendedor (no admin), el producto SIEMPRE se asigna a sí mismo,
-            // sin importar qué VendedorId venga en el formulario (evita que alguien
-            // manipule el HTML y cree productos a nombre de otro vendedor).
-            if (EsVendedor() && !EsAdministrador())
-            {
-                producto.VendedorId = ObtenerUsuarioId() ?? 0;
-                ModelState.Remove(nameof(producto.VendedorId));
-            }
+            producto.VendedorId = ObtenerUsuarioId() ?? 0;
+            ModelState.Remove(nameof(producto.VendedorId));
 
             if (ModelState.IsValid)
             {
@@ -205,15 +197,11 @@ namespace TuTienda.Controllers
             }
 
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
-            if (EsAdministrador())
-            {
-                ViewBag.VendedorId = new SelectList(_context.Usuarios.Where(u => u.RolId == 2), "Id", "Nombres", producto.VendedorId);
-            }
             return View(producto);
         }
 
         // GET: Producto/Edit/5
-        [Authorize(Roles = "Administrador,Vendedor")]
+        [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -227,21 +215,17 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
+            if (producto.VendedorId != ObtenerUsuarioId())
             {
                 return Forbid();
             }
 
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
-            if (EsAdministrador())
-            {
-                ViewBag.VendedorId = new SelectList(_context.Usuarios.Where(u => u.RolId == 2), "Id", "Nombres", producto.VendedorId);
-            }
             return View(producto);
         }
 
         // POST: Producto/Edit/5
-        [Authorize(Roles = "Administrador,Vendedor")]
+        [Authorize(Roles = "Vendedor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, [Bind("Id,Nombre,Descripcion,Precio,Stock,ImagenUrl,CategoriaId,VendedorId,Activo")] Producto producto)
@@ -251,22 +235,17 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            // Verificamos contra el dueño ORIGINAL guardado en la BD, no contra
-            // lo que venga en el formulario (que se puede manipular).
             var productoOriginal = await _context.Productos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id);
             if (productoOriginal == null)
             {
                 return NotFound();
             }
 
-            if (EsVendedor() && !EsAdministrador())
+            if (productoOriginal.VendedorId != ObtenerUsuarioId())
             {
-                if (productoOriginal.VendedorId != ObtenerUsuarioId())
-                {
-                    return Forbid();
-                }
-                producto.VendedorId = productoOriginal.VendedorId;
+                return Forbid();
             }
+            producto.VendedorId = productoOriginal.VendedorId;
 
             if (ModelState.IsValid)
             {
@@ -290,15 +269,11 @@ namespace TuTienda.Controllers
             }
 
             ViewBag.CategoriaId = new SelectList(_context.Categorias, "Id", "Nombre", producto.CategoriaId);
-            if (EsAdministrador())
-            {
-                ViewBag.VendedorId = new SelectList(_context.Usuarios.Where(u => u.RolId == 2), "Id", "Nombres", producto.VendedorId);
-            }
             return View(producto);
         }
 
         // GET: Producto/Delete/5
-        [Authorize(Roles = "Administrador,Vendedor")]
+        [Authorize(Roles = "Vendedor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -314,11 +289,11 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
+            if (producto.VendedorId != ObtenerUsuarioId())
             {
                 return Forbid();
             }
-            // Avisamos desde la confirmación si el producto ya tiene historial (pedidos/carritos/mensajes)
+
             bool tieneHistorial = await _context.DetallesPedido.AnyAsync(d => d.ProductoId == id)
                 || await _context.CarritoItems.AnyAsync(c => c.ProductoId == id)
                 || await _context.Mensajes.AnyAsync(m => m.ProductoId == id);
@@ -329,7 +304,7 @@ namespace TuTienda.Controllers
         }
 
         // POST: Producto/Delete/5
-        [Authorize(Roles = "Administrador,Vendedor")]
+        [Authorize(Roles = "Vendedor")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -340,7 +315,7 @@ namespace TuTienda.Controllers
                 return RedirectToAction(nameof(Mantenimiento));
             }
 
-            if (EsVendedor() && !EsAdministrador() && producto.VendedorId != ObtenerUsuarioId())
+            if (producto.VendedorId != ObtenerUsuarioId())
             {
                 return Forbid();
             }

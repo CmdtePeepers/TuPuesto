@@ -4,71 +4,67 @@
     ViewData["Title"] = "Crear Producto";
 }
 
-<h1>Crear Producto</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Precio" class="control-label"></label>
-                <input asp-for="Precio" class="form-control" />
-                <span asp-validation-for="Precio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Stock" class="control-label"></label>
-                <input asp-for="Stock" class="form-control" />
-                <span asp-validation-for="Stock" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImagenUrl" class="control-label"></label>
-                <input asp-for="ImagenUrl" class="form-control" />
-                <span asp-validation-for="ImagenUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoriaId" class="control-label"></label>
-                <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
-                <span asp-validation-for="CategoriaId" class="text-danger"></span>
-            </div>
+<div class="container py-4">
+    <div class="tt-panel">
+        <div class="tt-panel-header">
+            <h3><i class="bi bi-plus-circle-fill me-2"></i>Crear Producto</h3>
+        </div>
+        <div class="tt-panel-body">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            @if (User.IsInRole("Administrador"))
-            {
-                <div class="form-group">
-                    <label asp-for="VendedorId" class="control-label"></label>
-                    <select asp-for="VendedorId" class="form-control" asp-items="ViewBag.VendedorId"></select>
-                    <span asp-validation-for="VendedorId" class="text-danger"></span>
+            <form asp-action="Create">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nombre" class="form-label"></label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Ej: Laptop Lenovo IdeaPad" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="CategoriaId" class="form-label">Categoría</label>
+                        <select asp-for="CategoriaId" class="form-select" asp-items="ViewBag.CategoriaId">
+                            <option value="">-- Selecciona --</option>
+                        </select>
+                        <span asp-validation-for="CategoriaId" class="text-danger"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Descripcion" class="form-label"></label>
+                        <textarea asp-for="Descripcion" class="form-control" rows="3" placeholder="Detalles del producto"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Precio" class="form-label"></label>
+                        <input asp-for="Precio" class="form-control" placeholder="0.00" />
+                        <span asp-validation-for="Precio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Stock" class="form-label"></label>
+                        <input asp-for="Stock" class="form-control" placeholder="0" />
+                        <span asp-validation-for="Stock" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end pb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="Activo" />
+                            <label class="form-check-label" asp-for="Activo">Publicar como activo</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="ImagenUrl" class="form-label">URL de imagen</label>
+                        <input asp-for="ImagenUrl" class="form-control" placeholder="https://..." />
+                        <span asp-validation-for="ImagenUrl" class="text-danger"></span>
+                    </div>
                 </div>
-            }
-            else
-            {
-                <p class="text-muted">Este producto se creará a tu nombre como vendedor.</p>
-            }
 
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
-            </div>
-        </form>
+                <hr />
+
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-circle-fill me-2"></i>Crear Producto</button>
+                <a asp-action="Mantenimiento" class="btn btn-dark ms-2">Cancelar</a>
+            </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Volver a la lista</a>
 </div>
 
 @section Scripts {

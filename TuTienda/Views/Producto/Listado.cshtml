@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
     ViewData["Title"] = ViewBag.Titulo;
@@ -16,13 +17,15 @@
 <a class="lp-volver" asp-action="Index">← Volver a Productos</a>
 <h1 class="lp-titulo">@ViewBag.Titulo</h1>
 
-<form asp-action="@(categoriaId > 0 ? "Categoria" : "Buscar")" method="get" class="lp-filtro">
-    @if (categoriaId > 0)
-    {
-        <input type="hidden" name="id" value="@categoriaId" />
-    }
+<form asp-action="Buscar" method="get" class="lp-filtro">
     <input type="text" name="nombre" value="@ViewBag.Nombre" placeholder="Buscar por nombre" />
-    <input type="number" step="0.01" name="precioMin" value="@ViewBag.PrecioMin" placeholder="Precio mínimo" />
+    <select name="categoriaId">
+        <option value="0">Todas las categorías</option>
+        @foreach (var item in (SelectList)ViewBag.CategoriasFiltro)
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    </select>
     <button type="submit">Filtrar</button>
 </form>
 
@@ -85,18 +88,9 @@ else
                 @for (int i = 1; i <= totalPaginas; i++)
                 {
                     <li class="page-item @(i == paginaActual ? "active" : "")">
-                        @if (categoriaId > 0)
-                        {
-                            <a class="page-link" asp-action="Categoria" asp-route-id="@categoriaId"
-                               asp-route-nombre="@ViewBag.Nombre" asp-route-precioMin="@ViewBag.PrecioMin"
-                               asp-route-paginaActual="@i" asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
-                        }
-                        else
-                        {
-                            <a class="page-link" asp-action="Buscar"
-                               asp-route-nombre="@ViewBag.Nombre" asp-route-precioMin="@ViewBag.PrecioMin"
-                               asp-route-paginaActual="@i" asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
-                        }
+                        <a class="page-link" asp-action="Buscar"
+                           asp-route-nombre="@ViewBag.Nombre" asp-route-categoriaId="@categoriaId"
+                           asp-route-paginaActual="@i" asp-route-elementosPorPagina="@elementosPorPagina">@i</a>
                     </li>
                 }
             </ul>

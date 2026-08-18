@@ -14,71 +14,91 @@
     };
 }
 <link rel="stylesheet" href="~/css/pedidoGes.css" asp-append-version="true" />
-<h1>Gestionar pedidos</h1>
 
-@if (TempData["Mensaje"] != null)
-{
-    <div class="alert alert-success">@TempData["Mensaje"]</div>
-}
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
+<div class="container py-4">
+    <div class="pg-header">
+        <h1 class="pg-titulo">Gestionar pedidos</h1>
+        <div class="pg-subtitulo">Revisa el detalle de cada pedido y actualiza su estado.</div>
+    </div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-light border">No tienes pedidos recibidos todavía.</div>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Pedido</th>
-                <th>Cliente</th>
-                <th>Fecha</th>
-                <th>Total</th>
-                <th>Estado</th>
-                @if (puedeGestionarEstados)
-                {
-                    <th>Cambiar estado</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var pedido in Model)
-            {
-                var siguientes = transiciones[pedido.Estado];
-                <tr>
-                    <td>#@pedido.Id</td>
-                    <td>@pedido.Cliente?.Nombres @pedido.Cliente?.Apellidos</td>
-                    <td>@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>S/ @pedido.Total.ToString("0.00")</td>
-                    <td><span class="badge-estado badge-@pedido.Estado">@pedido.Estado</span></td>
+    @if (TempData["Mensaje"] != null)
+    {
+        <div class="alert alert-success">@TempData["Mensaje"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="pg-vacio">No tienes pedidos recibidos todavía.</div>
+    }
+    else
+    {
+        @foreach (var pedido in Model)
+        {
+            var siguientes = transiciones[pedido.Estado];
+            var nombreCliente = $"{pedido.Cliente?.Nombres} {pedido.Cliente?.Apellidos}";
+            var inicial = string.IsNullOrEmpty(pedido.Cliente?.Nombres) ? "?" : pedido.Cliente.Nombres.Substring(0, 1).ToUpper();
+
+            <div class="pg-card">
+                <div class="pg-card-header">
+                    <div>
+                        <div class="pg-card-numero">Pedido #@pedido.Id</div>
+                        <div class="pg-card-fecha">@pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div class="pg-card-total">S/ @pedido.Total.ToString("0.00")</div>
+                        <span class="badge-estado badge-@pedido.Estado">@pedido.Estado</span>
+                    </div>
+                </div>
+
+                <div class="pg-card-body">
+                    <div class="pg-cliente">
+                        <div class="pg-cliente-avatar">@inicial</div>
+                        <div class="pg-cliente-info">
+                            <strong>@nombreCliente</strong>
+                            <small><i class="bi bi-envelope-fill me-1"></i>@pedido.Cliente?.Email</small>
+                        </div>
+                    </div>
+
+                    <div class="pg-items-titulo">Productos del pedido</div>
+                    @foreach (var detalle in pedido.Detalles)
+                    {
+                        <div class="pg-item">
+                            <span class="pg-item-nombre">
+                                @detalle.Producto?.Nombre
+                                <span class="pg-item-cantidad">x@(detalle.Cantidad)</span>
+                            </span>
+                            <span class="pg-item-subtotal">S/ @detalle.Subtotal.ToString("0.00")</span>
+                        </div>
+                    }
+
                     @if (puedeGestionarEstados)
                     {
-                        <td>
+                        <div class="pg-acciones">
                             @if (siguientes.Length > 0)
                             {
-                                <form asp-action="CambiarEstado" method="post" class="d-flex gap-2">
+                                <form asp-action="CambiarEstado" method="post" class="d-flex align-items-center gap-2">
                                     <input type="hidden" name="id" value="@pedido.Id" />
-                                    <select name="nuevoEstado" class="form-select form-select-sm" style="width:auto;">
+                                    <select name="nuevoEstado">
                                         @foreach (var estado in siguientes)
                                         {
                                             <option value="@estado">@estado</option>
                                         }
                                     </select>
-                                    <button type="submit" class="btn btn-sm btn-danger">Actualizar</button>
+                                    <button type="submit">Actualizar estado</button>
                                 </form>
                             }
                             else
                             {
-                                <span class="text-muted">— sin cambios posibles —</span>
+                                <span class="pg-sin-cambios">— Este pedido ya no admite cambios de estado —</span>
                             }
-                        </td>
+                        </div>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                </div>
+            </div>
+        }
+    }
+</div>

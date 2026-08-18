@@ -121,6 +121,17 @@ CREATE TABLE Mensajes (
 GO
 
 
+CREATE TABLE Contactos (
+    Id          INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre      NVARCHAR(150)  NOT NULL,
+    Email       NVARCHAR(150)  NOT NULL,
+    Telefono    NVARCHAR(20)   NULL,
+    Motivo      NVARCHAR(100)  NOT NULL,
+    Mensaje     NVARCHAR(1000) NOT NULL,
+    FechaEnvio  DATETIME2      NOT NULL DEFAULT GETDATE(),
+    Atendido    BIT            NOT NULL DEFAULT 0
+);
+GO
 /* STORED PROCEDURES*/
 
 -- Filtro + paginación de productos (catálogo y búsqueda)

@@ -3,6 +3,7 @@ using TuTienda.Data;
 using TuTienda.Repository;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TuTienda.Services;
+using TuTienda.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ProductoRepository>();
 builder.Services.AddScoped<ReporteRepository>();
 
+// SignalR (chat en tiempo real Cliente-Vendedor)
+builder.Services.AddSignalR();
 
 // Autenticación por cookies (login manual)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -51,6 +54,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+// Endpoint SignalR
+app.MapHub<MensajeHub>("/mensajehub");
+
 
 app.MapControllerRoute(
     name: "default",

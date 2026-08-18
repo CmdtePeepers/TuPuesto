@@ -7,77 +7,85 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/detailsPro.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 }
 
-<a class="dp-volver" asp-action="Index">← Volver a Productos</a>
+<div class="container py-4">
+    @if (User.IsInRole("Vendedor"))
+    {
+        <a class="tt-volver" asp-action="Mantenimiento">← Volver a Mis Productos</a>
+    }
+    else
+    {
+        <a class="tt-volver" asp-action="Index">← Volver a Productos</a>
+    }
 
-<div class="dp-layout">
-    <div class="dp-imagen-wrap">
-        @if (!string.IsNullOrEmpty(Model.ImagenUrl))
-        {
-            <img src="@Model.ImagenUrl" alt="@Model.Nombre" />
-        }
-        else
-        {
-            <div class="dp-imagen-vacia">Sin imagen disponible</div>
-        }
-    </div>
+    <div class="tt-detalle-layout">
+        <div class="tt-detalle-img">
+            @if (!string.IsNullOrEmpty(Model.ImagenUrl))
+            {
+                <img src="@Model.ImagenUrl" alt="@Model.Nombre" />
+            }
+            else
+            {
+                <span class="text-muted">Sin imagen disponible</span>
+            }
+        </div>
 
-    <div class="dp-info">
-        @if (Model.Categoria != null)
-        {
-            <span class="dp-categoria">@Model.Categoria.Nombre</span>
-        }
+        <div>
+            @if (Model.Categoria != null)
+            {
+                <span class="tt-badge">@Model.Categoria.Nombre</span>
+            }
 
-        <h1 class="dp-nombre">@Model.Nombre</h1>
+            <h1 class="tt-titulo" style="color:#2b2b2b; font-size:1.9rem;">@Model.Nombre</h1>
 
-        <div class="dp-precio">S/ @Model.Precio.ToString("0.00")</div>
+            <div class="tt-detalle-precio">S/ @Model.Precio.ToString("0.00")</div>
 
-        @if (hayStock)
-        {
-            <span class="dp-stock dp-stock-disponible">✓ @Model.Stock unidades disponibles</span>
-        }
-        else
-        {
-            <span class="dp-stock dp-stock-agotado">✕ Sin stock</span>
-        }
+            @if (hayStock)
+            {
+                <span class="tt-badge-estado tt-badge-activo">✓ @Model.Stock unidades disponibles</span>
+            }
+            else
+            {
+                <span class="tt-badge-estado tt-badge-inactivo">✕ Sin stock</span>
+            }
 
-        @if (!string.IsNullOrEmpty(Model.Descripcion))
-        {
-            <p class="dp-descripcion">@Model.Descripcion</p>
-        }
+            @if (!string.IsNullOrEmpty(Model.Descripcion))
+            {
+                <p class="mt-3" style="color:#5a5a5a; line-height:1.6;">@Model.Descripcion</p>
+            }
 
-        @if (Model.Vendedor != null)
-        {
-            <div class="dp-vendedor">
-                <div class="dp-vendedor-icono">@((Model.Vendedor.NombreTienda ?? Model.Vendedor.Nombres).Substring(0, 1).ToUpper())</div>
-                <div class="dp-vendedor-texto">
-                    <small>Vendido por</small>
+            @if (Model.Vendedor != null)
+            {
+                <div class="tt-info-box mt-3 mb-3" style="padding:1rem 1.2rem;">
+                    <small class="text-muted d-block">Vendido por</small>
                     <strong>@(Model.Vendedor.NombreTienda ?? Model.Vendedor.Nombres)</strong>
                 </div>
+            }
+
+            <div class="d-flex gap-2 flex-wrap mt-3">
+                @if (hayStock && puedeComprar)
+                {
+                    <form asp-controller="Carrito" asp-action="Agregar" method="post">
+                        <input type="hidden" name="productoId" value="@Model.Id" />
+                        <input type="hidden" name="cantidad" value="1" />
+                        <button type="submit" class="btn btn-primary" style="background:var(--rojo); border:none;">
+                            <i class="bi bi-cart-plus-fill me-2"></i>Agregar al carrito
+                        </button>
+                    </form>
+                }
+
+                @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente") && Model.VendedorId > 0)
+                {
+                    <a asp-controller="Mensaje" asp-action="Conversacion"
+                       asp-route-id="@Model.VendedorId" asp-route-productoId="@Model.Id"
+                       class="tt-btn-contactar">
+                        <img src="~/imagenes/whatsap.png" alt="" />
+                        Contactar al vendedor
+                    </a>
+                }
             </div>
-        }
-
-        <div class="dp-acciones">
-            @if (hayStock && puedeComprar)
-            {
-                <form asp-controller="Carrito" asp-action="Agregar" method="post">
-                    <input type="hidden" name="productoId" value="@Model.Id" />
-                    <input type="hidden" name="cantidad" value="1" />
-                    <button type="submit" class="dp-btn-carrito">Agregar al carrito</button>
-                </form>
-            }
-
-            @if (User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Cliente") && Model.VendedorId > 0)
-            {
-                <a asp-controller="Mensaje" asp-action="Conversacion"
-                   asp-route-id="@Model.VendedorId" asp-route-productoId="@Model.Id"
-                   class="dp-btn-contactar">
-                    <img src="~/imagenes/whatsap.png" alt="" />
-                    Contactar al vendedor
-                </a>
-            }
         </div>
     </div>
 </div>

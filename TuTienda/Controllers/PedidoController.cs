@@ -23,7 +23,6 @@ namespace TuTienda.Controllers
             return int.TryParse(valor, out var id) ? id : null;
         }
 
-        private bool EsAdministrador() => User.IsInRole("Administrador");
         private bool EsVendedor() => User.IsInRole("Vendedor");
 
         // GET: Pedido/MisCompras -> Historial del Cliente logueado
@@ -42,9 +41,19 @@ namespace TuTienda.Controllers
             return View(pedidos);
         }
 
-        // GET: Pedido/Gestionar -> Pedidos recibidos (Vendedor: solo los suyos, Administrador: todos)
+        // GET: Pedido/Gestionar
+        // Vendedor: ve solo los pedidos que le hicieron a él y puede cambiar el estado.
+        // Cliente: ve solo sus propios pedidos, en modo solo-lectura.
+        // Administrador: ya NO tiene acceso a esta vista.
         public async Task<IActionResult> Gestionar()
         {
+            if (User.IsInRole("Administrador"))
+            {
+                return Forbid();
+            }
+
+            var usuarioId = ObtenerUsuarioId();
+
             IQueryable<Models.Entities.Pedido> query = _context.Pedidos
                 .Include(p => p.Cliente)
                 .Include(p => p.Vendedor)
@@ -52,29 +61,16 @@ namespace TuTienda.Controllers
                     .ThenInclude(d => d.Producto)
                 .OrderByDescending(p => p.FechaPedido);
 
-            var usuarioId = ObtenerUsuarioId();
-
-            if (EsAdministrador())
-            {
-                // sin filtro: ve todos
-            }
-            else if (EsVendedor())
-            {
-                query = query.Where(p => p.VendedorId == usuarioId);
-            }
-            else
-            {
-                // Cliente: solo sus propias compras
-                query = query.Where(p => p.ClienteId == usuarioId);
-            }
+            query = EsVendedor()
+                ? query.Where(p => p.VendedorId == usuarioId)
+                : query.Where(p => p.ClienteId == usuarioId);
 
             var pedidos = await query.ToListAsync();
             return View(pedidos);
         }
 
-
-        // POST: Pedido/CambiarEstado
-        [Authorize(Roles = "Vendedor,Administrador")]
+        // POST: Pedido/CambiarEstado -> Exclusivo del Vendedor dueño del pedido
+        [Authorize(Roles = "Vendedor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstado(int id, EstadoPedido nuevoEstado)
@@ -85,13 +81,11 @@ namespace TuTienda.Controllers
                 return NotFound();
             }
 
-            if (!EsAdministrador() && pedido.VendedorId != ObtenerUsuarioId())
+            if (pedido.VendedorId != ObtenerUsuarioId())
             {
                 return Forbid();
             }
 
-            // Transiciones permitidas: Pendiente -> Confirmado/Cancelado, Confirmado -> Entregado/Cancelado.
-            // Entregado y Cancelado son estados finales.
             var transicionesValidas = new Dictionary<EstadoPedido, EstadoPedido[]>
             {
                 [EstadoPedido.Pendiente] = new[] { EstadoPedido.Confirmado, EstadoPedido.Cancelado },

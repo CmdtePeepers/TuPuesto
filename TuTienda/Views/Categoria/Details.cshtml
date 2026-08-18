@@ -4,19 +4,45 @@
     ViewData["Title"] = "Detalles de la Categoría";
 }
 
-<h1>Detalles de la Categoría</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
+}
 
-<div>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Nombre)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+<div class="container py-4">
 
-        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Descripcion)</dt>
-        <dd class="col-sm-9">@Html.DisplayFor(model => model.Descripcion)</dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Editar</a> |
-    <a asp-action="Index">Volver a la lista</a>
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="tt-panel">
+
+                <div class="tt-panel-header">
+                    <h3><i class="bi bi-tag-fill me-2"></i>Detalles de la Categoría</h3>
+                </div>
+
+                <div class="tt-panel-body">
+
+                    <div class="tt-info-box">
+                        <dl class="row mb-0">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Nombre)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Nombre)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Descripcion)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Descripcion)</dd>
+                        </dl>
+                    </div>
+
+                    <hr />
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-dark"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+                        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Editar</a>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
 </div>
