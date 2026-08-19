@@ -44,8 +44,7 @@ namespace TuTienda.Controllers
         // GET: Pedido/Gestionar
         // Vendedor: ve solo los pedidos que le hicieron a él y puede cambiar el estado.
         // Cliente: ve solo sus propios pedidos, en modo solo-lectura.
-        // Administrador: ya NO tiene acceso a esta vista.
-        public async Task<IActionResult> Gestionar()
+        public async Task<IActionResult> Gestionar(string? estado = null)
         {
             if (User.IsInRole("Administrador"))
             {
@@ -64,6 +63,14 @@ namespace TuTienda.Controllers
             query = EsVendedor()
                 ? query.Where(p => p.VendedorId == usuarioId)
                 : query.Where(p => p.ClienteId == usuarioId);
+
+            // Filtro opcional por estado (dropdown en la vista)
+            if (!string.IsNullOrEmpty(estado) && Enum.TryParse<EstadoPedido>(estado, out var estadoFiltro))
+            {
+                query = query.Where(p => p.Estado == estadoFiltro);
+            }
+
+            ViewBag.EstadoSeleccionado = estado ?? "";
 
             var pedidos = await query.ToListAsync();
             return View(pedidos);

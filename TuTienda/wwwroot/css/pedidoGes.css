@@ -168,6 +168,33 @@
     font-weight: 700;
 }
 
+.pg-filtro {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1.6rem;
+}
+
+    .pg-filtro label {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #6B6656;
+    }
+
+    .pg-filtro select {
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.88rem;
+        background: #fff;
+        cursor: pointer;
+    }
+
+        .pg-filtro select:focus {
+            outline: none;
+            border-color: #E8283F;
+        }
+
 .pg-acciones {
     margin-top: 1.2rem;
     padding-top: 1.1rem;

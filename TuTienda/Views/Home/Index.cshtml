@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TuTienda.Models.Entities.Producto>
+﻿@model IEnumerable<TuTienda.Models.ViewModels.CategoriaConProductos>
 
 @{
     ViewData["Title"] = "Inicio";
@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
 
 <div class="tt-hero">
+    <img src="~/imagenes/logo.png" alt="TuTienda"
+         style="position:absolute; top:50%; right:1.2rem; transform:translateY(-50%); height:110px; max-height:110px; width:auto; max-width:220px; object-fit:contain; z-index:5;" />
     <div class="tt-badge">🔥 Ofertas de miles de vendedores</div>
 
     @if (User.Identity != null && User.Identity.IsAuthenticated)
@@ -20,7 +22,7 @@
             }
             else if (User.IsInRole("Administrador"))
             {
-                <span>Tienes acceso al panel administrativo: usuarios, productos y reportes.</span>
+                <span>Supervisa usuarios, categorías, reportes y consultas de contacto desde tu panel.</span>
             }
             else
             {
@@ -31,6 +33,10 @@
             @if (User.IsInRole("Vendedor"))
             {
                 <a class="tt-btn-primario" asp-controller="Producto" asp-action="Mantenimiento">Mis productos</a>
+            }
+            else if (User.IsInRole("Administrador"))
+            {
+                <a class="tt-btn-primario" asp-controller="Reporte" asp-action="Index">Ver reportes</a>
             }
             else
             {
@@ -98,30 +104,59 @@
         </a>
     </div>
 }
+else if (ViewBag.EsAdministrador == true)
+{
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">@ViewBag.TotalUsuarios</div>
+                <div class="text-muted" style="font-size:0.85rem;">Usuarios registrados en la plataforma</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">@ViewBag.TotalCategorias</div>
+                <div class="text-muted" style="font-size:0.85rem;">Categorías activas en el catálogo</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="tt-info-box text-center">
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">@ViewBag.MensajesPendientes</div>
+                <div class="text-muted" style="font-size:0.85rem;">Consultas de contacto sin atender</div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="tt-seccion-titulo">Accesos rápidos</h2>
+    <div class="tt-rep-grid">
+        <a asp-controller="Usuario" asp-action="Index" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-people-fill"></i></div>
+            <div class="tt-rep-titulo">Usuarios</div>
+            <div class="tt-rep-desc">Crea cuentas de vendedor y gestiona el acceso de todos los usuarios.</div>
+            <div class="tt-rep-flecha">Gestionar →</div>
+        </a>
+        <a asp-controller="Categoria" asp-action="Index" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-tags-fill"></i></div>
+            <div class="tt-rep-titulo">Categorías</div>
+            <div class="tt-rep-desc">Mantén organizado el catálogo general de la plataforma.</div>
+            <div class="tt-rep-flecha">Gestionar →</div>
+        </a>
+        <a asp-controller="Reporte" asp-action="Index" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="tt-rep-titulo">Reportes</div>
+            <div class="tt-rep-desc">Ventas, productos más vendidos e ingresos por vendedor.</div>
+            <div class="tt-rep-flecha">Ver reportes →</div>
+        </a>
+        <a asp-controller="Contacto" asp-action="Index" class="tt-rep-card">
+            <div class="tt-rep-icono"><i class="bi bi-envelope-fill"></i></div>
+            <div class="tt-rep-titulo">Mensajes de contacto</div>
+            <div class="tt-rep-desc">Revisa y atiende las solicitudes recibidas.</div>
+            <div class="tt-rep-flecha">Ver mensajes →</div>
+        </a>
+    </div>
+}
 else
 {
-    <h2 class="tt-seccion-titulo">Productos recientes</h2>
-
-    @if (!Model.Any())
-    {
-        <div class="tt-vacio">
-            Aún no hay productos publicados. Cuando los vendedores empiecen a subir productos, aparecerán aquí.
-        </div>
-    }
-    else
-    {
-        <div class="tt-grid">
-            @foreach (var producto in Model)
-            {
-                <div class="tt-card">
-                    <img class="tt-card-img" src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/300x200?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
-                    <div class="tt-card-body">
-                        <div class="tt-card-categoria">@(producto.Categoria?.Nombre ?? "Sin categoría")</div>
-                        <div class="tt-card-nombre">@producto.Nombre</div>
-                        <div class="tt-card-precio">S/ @producto.Precio.ToString("0.00")</div>
-                    </div>
-                </div>
-            }
-        </div>
-    }
+    <h2 class="tt-seccion-titulo">Explora nuestros productos</h2>
+    @await Html.PartialAsync("_CatalogoConBuscador", Model)
 }

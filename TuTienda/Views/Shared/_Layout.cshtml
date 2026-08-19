@@ -27,23 +27,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-
-                        @if (!User.IsInRole("Administrador") && !User.IsInRole("Vendedor"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Producto" asp-action="Index">Productos</a>
-                            </li>
-                        }
-
-                        @if (!(User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("Vendedor"))))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Nosotros">Nosotros</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Contacto" asp-action="Contactanos">Contáctanos</a>
-                            </li>
-                        }
+                                                
+                        
 
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
@@ -93,11 +78,26 @@
                     </ul>
 
                     <ul class="navbar-nav">
+                        @{
+                            bool puedeVerNosotros = !(User.Identity != null && User.Identity.IsAuthenticated && (User.IsInRole("Administrador") || User.IsInRole("Vendedor")));
+                            bool puedeVerContacto = !(User.Identity != null && User.Identity.IsAuthenticated && User.IsInRole("Administrador"));
+                        }
+
+                        @if (puedeVerNosotros)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Nosotros">Nosotros</a>
+                            </li>
+                        }
+                        @if (puedeVerContacto)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Contacto" asp-action="Contactanos">Contáctanos</a>
+                            </li>
+                        }
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item d-flex align-items-center me-2">
-                                <span class="nav-link text-dark">Hola, @User.Identity.Name</span>
-                            </li>
                             <li class="nav-item d-flex align-items-center">
                                 <form asp-controller="Account" asp-action="Logout" method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Cerrar sesión</button>

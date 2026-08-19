@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Mis Productos";
+    var categoriasDisponibles = Model
+        .Where(p => p.Categoria != null)
+        .Select(p => p.Categoria!)
+        .GroupBy(c => c.Id)
+        .Select(g => g.First())
+        .OrderBy(c => c.Nombre);
 }
 
 @section Styles {
@@ -44,8 +50,19 @@
             }
             else
             {
+                <div class="tt-mant-buscador">
+                    <input type="text" id="filtroNombre" placeholder="Buscar por nombre..." />
+                    <select id="filtroCategoria">
+                        <option value="0">Todas las categorías</option>
+                        @foreach (var cat in categoriasDisponibles)
+                        {
+                            <option value="@cat.Id">@cat.Nombre</option>
+                        }
+                    </select>
+                </div>
+
                 <div class="table-responsive">
-                    <table class="table align-middle tt-tabla">
+                    <table class="table align-middle tt-tabla" id="tablaMisProductos">
                         <thead>
                             <tr>
                                 <th>Imagen</th>
@@ -60,7 +77,7 @@
                         <tbody>
                             @foreach (var p in Model)
                             {
-                                <tr>
+                                <tr data-nombre="@p.Nombre.ToLower()" data-categoria="@p.CategoriaId">
                                     <td>
                                         <img src="@(string.IsNullOrEmpty(p.ImagenUrl) ? "https://via.placeholder.com/60x60?text=Sin+img" : p.ImagenUrl)"
                                              alt="@p.Nombre"
@@ -95,6 +112,9 @@
                             }
                         </tbody>
                     </table>
+                    <div id="mensajeSinResultados" class="tt-msg-vacio" style="display:none;">
+                        No se encontraron productos con ese nombre o categoría.
+                    </div>
                 </div>
             }
 
@@ -103,3 +123,37 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <script>
+        (function() {
+            const inputNombre = document.getElementById('filtroNombre');
+            const selectCategoria = document.getElementById('filtroCategoria');
+            const filas = document.querySelectorAll('#tablaMisProductos tbody tr');
+            const mensajeVacio = document.getElementById('mensajeSinResultados');
+
+            function aplicarFiltro() {
+                const texto = inputNombre.value.trim().toLowerCase();
+                const categoriaId = selectCategoria.value;
+                let visibles = 0;
+
+                filas.forEach(function(fila) {
+                    const coincideNombre = fila.dataset.nombre.includes(texto);
+                    const coincideCategoria = categoriaId === "0" || fila.dataset.categoria === categoriaId;
+
+                    if (coincideNombre && coincideCategoria) {
+                        fila.style.display = "";
+                        visibles++;
+                    } else {
+                        fila.style.display = "none";
+                    }
+                });
+
+                mensajeVacio.style.display = visibles === 0 ? "block" : "none";
+            }
+
+            inputNombre.addEventListener('input', aplicarFiltro);
+            selectCategoria.addEventListener('change', aplicarFiltro);
+        })();
+    </script>
+}

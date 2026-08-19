@@ -1,0 +1,61 @@
+﻿@model IEnumerable<TuTienda.Models.ViewModels.CategoriaConProductos>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    bool puedeComprar = !(User.IsInRole("Administrador") || User.IsInRole("Vendedor"));
+}
+
+<form asp-controller="Producto" asp-action="Buscar" method="get" class="tt-buscador">
+    <input type="text" name="nombre" placeholder="Busca lo que necesites: ropa, laptops, comida..." />
+    <select name="categoriaId">
+        <option value="0">Todas las categorías</option>
+        @foreach (var item in (SelectList)ViewBag.CategoriasFiltro)
+        {
+            <option value="@item.Value">@item.Text</option>
+        }
+    </select>
+    <button type="submit"><i class="bi bi-search me-1"></i>Buscar</button>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="tt-vacio">Aún no hay productos publicados en ninguna categoría.</div>
+}
+else
+{
+    @foreach (var seccion in Model)
+    {
+        <div class="mb-4">
+            <div class="tt-cat-header">
+                <h2 class="tt-seccion-titulo" style="margin:0;">@seccion.Categoria.Nombre</h2>
+                <a class="tt-ver-todos" asp-controller="Producto" asp-action="Categoria" asp-route-id="@seccion.Categoria.Id">Ver todos →</a>
+            </div>
+            <div class="tt-grid">
+                @foreach (var producto in seccion.Productos)
+                {
+                    <div class="tt-card">
+                        <a asp-controller="Producto" asp-action="Details" asp-route-id="@producto.Id" style="text-decoration:none; color:inherit;">
+                            <img class="tt-card-img" src="@(string.IsNullOrEmpty(producto.ImagenUrl) ? "https://via.placeholder.com/200x150?text=Sin+imagen" : producto.ImagenUrl)" alt="@producto.Nombre" />
+                        </a>
+                        <div class="tt-card-body">
+                            <div class="tt-card-nombre">@producto.Nombre</div>
+                            <div class="tt-card-precio">S/ @producto.Precio.ToString("0.00")</div>
+                            @if (producto.Stock > 0 && puedeComprar)
+                            {
+                                <form asp-controller="Carrito" asp-action="Agregar" method="post" class="mt-2">
+                                    <input type="hidden" name="productoId" value="@producto.Id" />
+                                    <input type="hidden" name="cantidad" value="1" />
+                                    <button type="submit" class="tt-card-btn">Agregar al carrito</button>
+                                </form>
+                            }
+                            else if (producto.Stock <= 0)
+                            {
+                                <span class="tt-stock-no" style="font-size:0.8rem;">Sin stock</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

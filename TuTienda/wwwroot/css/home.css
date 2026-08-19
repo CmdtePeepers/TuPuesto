@@ -1,14 +1,13 @@
-﻿
-:root {
+﻿:root {
     --rojo: #E8283F;
     --rojo-oscuro: #A8172A;
     --rojo-profundo: #6E0F1D;
     --naranja: #FF8A3D;
     --amarillo: #FFC93C;
     --crema: #FFF7F2;
-    --gris-texto: #4a4a4a;
 }
 
+/* ===== Hero (Home) ===== */
 .tt-hero {
     background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo-oscuro) 55%, var(--rojo-profundo) 100%);
     color: #fff;
@@ -29,6 +28,19 @@
         background: radial-gradient(circle, rgba(255,201,60,0.25) 0%, transparent 70%);
         border-radius: 50%;
     }
+
+.tt-hero-logo {
+    position: absolute;
+    top: 50%;
+    right: 3rem;
+    transform: translateY(-50%);
+    height: 110px;
+    max-height: 110px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+    z-index: 2;
+}
 
 .tt-badge {
     display: inline-block;
@@ -105,6 +117,7 @@
         color: #fff;
     }
 
+/* ===== Títulos de sección / grillas de productos ===== */
 .tt-seccion-titulo {
     font-family: Georgia, 'Times New Roman', serif;
     font-size: 1.5rem;
@@ -166,6 +179,69 @@
     font-size: 1.05rem;
 }
 
+.tt-card-desc {
+    color: #8a8574;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tt-card-stock {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+}
+
+.tt-stock-si {
+    color: #146c2e;
+}
+
+.tt-stock-no {
+    color: var(--rojo-oscuro);
+    font-weight: 700;
+}
+
+.tt-card-btn {
+    display: block;
+    width: 100%;
+    background: var(--rojo);
+    color: #fff;
+    border: none;
+    padding: 0.55rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+}
+
+    .tt-card-btn:hover {
+        background: var(--rojo-oscuro);
+        color: #fff;
+    }
+
+.tt-card-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.78rem;
+    margin-top: 0.5rem;
+}
+
+    .tt-card-links a {
+        color: #6b6656;
+        text-decoration: none;
+    }
+
+        .tt-card-links a:hover {
+            color: var(--rojo-oscuro);
+            text-decoration: underline;
+        }
+
 .tt-vacio {
     text-align: center;
     padding: 3rem 1rem;
@@ -175,9 +251,167 @@
     background: var(--crema);
 }
 
+/* ===== Buscador (Catálogo público) ===== */
+.tt-buscador {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
 
-/* ===== Panel de gestión (Usuarios / Categorías) — mismo lenguaje visual que el Home ===== */
+    .tt-buscador input[type="text"] {
+        flex: 1;
+        min-width: 220px;
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.95rem;
+    }
 
+    .tt-buscador select {
+        padding: 0.7rem 1rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: #fff;
+        min-width: 190px;
+    }
+
+    .tt-buscador button {
+        background: var(--rojo);
+        color: #fff;
+        border: none;
+        padding: 0.7rem 1.4rem;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .tt-buscador button:hover {
+            background: var(--rojo-oscuro);
+        }
+
+.tt-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tt-ver-todos {
+    color: var(--rojo);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+    .tt-ver-todos:hover {
+        text-decoration: underline;
+    }
+
+.tt-volver {
+    display: inline-block;
+    margin-bottom: 0.8rem;
+    color: var(--rojo-oscuro);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+    .tt-volver:hover {
+        text-decoration: underline;
+    }
+
+/* ===== Detalle de producto (Details) ===== */
+.tt-detalle-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 2rem;
+}
+
+.tt-detalle-img {
+    border: 1px solid #f0e2dc;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--crema);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+    .tt-detalle-img img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+    }
+
+.tt-detalle-precio {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--rojo-oscuro);
+    margin-bottom: 0.6rem;
+}
+
+.tt-btn-contactar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #fff;
+    color: #146c2e;
+    border: 1.5px solid #25D366;
+    padding: 0.7rem 1.3rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+
+    .tt-btn-contactar:hover {
+        background: #eafff1;
+        color: #146c2e;
+    }
+
+    .tt-btn-contactar img {
+        width: 18px;
+        height: 18px;
+    }
+
+/* ===== Buscador de Mantenimiento (Vendedor) ===== */
+.tt-mant-buscador {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+}
+
+    .tt-mant-buscador input[type="text"] {
+        flex: 1;
+        min-width: 220px;
+        padding: 0.6rem 0.9rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.9rem;
+    }
+
+    .tt-mant-buscador select {
+        padding: 0.6rem 0.9rem;
+        border: 1.5px solid #f0d9d2;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: #fff;
+        min-width: 190px;
+    }
+
+        .tt-mant-buscador input:focus,
+        .tt-mant-buscador select:focus {
+            outline: none;
+            border-color: var(--rojo);
+        }
+
+/* ===== Panel de gestión (Usuarios / Categorías / Productos) ===== */
 .tt-panel {
     border: 1px solid #f0e2dc;
     border-radius: 12px;
@@ -430,13 +664,7 @@
         margin-bottom: 0.9rem;
     }
 
-
 /* ===== Panel de Reportes ===== */
-
-.tt-rep-header {
-    margin-bottom: 1.8rem;
-}
-
 .tt-rep-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -496,7 +724,6 @@
 }
 
 /* ===== Bandeja de Mensajes de contacto ===== */
-
 .tt-msg-vacio {
     text-align: center;
     padding: 3rem 1rem;
@@ -506,11 +733,12 @@
     background: var(--crema);
 }
 
-table.tt-msg-tabla thead {
-    background: var(--rojo-profundo);
+.tt-msg-tabla {
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-    table.tt-msg-tabla thead th {
+    .tt-msg-tabla thead th {
         background: var(--rojo-profundo);
         border: none;
         padding: 0.9rem;
@@ -519,11 +747,6 @@ table.tt-msg-tabla thead {
         letter-spacing: 0.03em;
         color: #fff !important;
     }
-
-.tt-msg-tabla {
-    border-radius: 10px;
-    overflow: hidden;
-}
 
     .tt-msg-tabla tbody td {
         vertical-align: middle;
@@ -598,252 +821,3 @@ table.tt-msg-tabla thead {
         background: #6b6656;
         color: #fff;
     }
-
-/* ===== Catálogo público (Index / Listado) ===== */
-.tt-buscador {
-    display: flex;
-    gap: 0.6rem;
-    margin-bottom: 2rem;
-}
-
-    .tt-buscador input[type="text"],
-    .tt-buscador input[type="number"] {
-        padding: 0.7rem 1rem;
-        border: 1.5px solid #f0d9d2;
-        border-radius: 8px;
-        font-size: 0.95rem;
-    }
-
-    .tt-buscador input[type="text"] {
-        flex: 1;
-    }
-
-    .tt-buscador input[type="number"] {
-        width: 160px;
-    }
-
-    .tt-buscador button {
-        background: var(--rojo);
-        color: #fff;
-        border: none;
-        padding: 0.7rem 1.4rem;
-        border-radius: 8px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-        .tt-buscador button:hover {
-            background: var(--rojo-oscuro);
-        }
-
-.tt-card-desc {
-    color: #8a8574;
-    font-size: 0.8rem;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.tt-card-stock {
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-bottom: 0.7rem;
-}
-
-.tt-stock-si {
-    color: #146c2e;
-}
-
-.tt-stock-no {
-    color: var(--rojo-oscuro);
-}
-
-.tt-card-btn {
-    display: block;
-    width: 100%;
-    background: var(--rojo);
-    color: #fff;
-    border: none;
-    padding: 0.55rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-}
-
-    .tt-card-btn:hover {
-        background: var(--rojo-oscuro);
-        color: #fff;
-    }
-
-.tt-card-links {
-    display: flex;
-    justify-content: center;
-    gap: 0.6rem;
-    font-size: 0.78rem;
-    margin-top: 0.5rem;
-}
-
-    .tt-card-links a {
-        color: #6b6656;
-        text-decoration: none;
-    }
-
-        .tt-card-links a:hover {
-            color: var(--rojo-oscuro);
-            text-decoration: underline;
-        }
-
-.tt-cat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.tt-ver-todos {
-    color: var(--rojo);
-    font-weight: 700;
-    font-size: 0.88rem;
-    text-decoration: none;
-}
-
-    .tt-ver-todos:hover {
-        text-decoration: underline;
-    }
-
-.tt-volver {
-    display: inline-block;
-    margin-bottom: 0.8rem;
-    color: var(--rojo-oscuro);
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-    .tt-volver:hover {
-        text-decoration: underline;
-    }
-
-/* ===== Detalle de producto (Details) ===== */
-.tt-detalle-layout {
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    gap: 2rem;
-}
-
-.tt-detalle-img {
-    border: 1px solid #f0e2dc;
-    border-radius: 12px;
-    overflow: hidden;
-    background: var(--crema);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 300px;
-}
-
-    .tt-detalle-img img {
-        width: 100%;
-        max-height: 400px;
-        object-fit: cover;
-    }
-
-.tt-detalle-precio {
-    font-size: 1.9rem;
-    font-weight: 800;
-    color: var(--rojo-oscuro);
-    margin-bottom: 0.6rem;
-}
-
-.tt-btn-contactar {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: #fff;
-    color: #146c2e;
-    border: 1.5px solid #25D366;
-    padding: 0.7rem 1.3rem;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.88rem;
-    text-decoration: none;
-}
-
-    .tt-btn-contactar:hover {
-        background: #eafff1;
-        color: #146c2e;
-    }
-
-    .tt-btn-contactar img {
-        width: 18px;
-        height: 18px;
-    }
-
-.tt-buscador {
-    display: flex;
-    gap: 0.6rem;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-}
-
-    .tt-buscador input[type="text"] {
-        flex: 1;
-        min-width: 220px;
-        padding: 0.7rem 1rem;
-        border: 1.5px solid #f0d9d2;
-        border-radius: 8px;
-        font-size: 0.95rem;
-    }
-
-    .tt-buscador select {
-        padding: 0.7rem 1rem;
-        border: 1.5px solid #f0d9d2;
-        border-radius: 8px;
-        font-size: 0.95rem;
-        background: #fff;
-        min-width: 190px;
-    }
-
-    .tt-buscador button {
-        background: var(--rojo);
-        color: #fff;
-        border: none;
-        padding: 0.7rem 1.4rem;
-        border-radius: 8px;
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-        .tt-buscador button:hover {
-            background: var(--rojo-oscuro);
-        }
-
-.tt-cat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.tt-ver-todos {
-    color: var(--rojo);
-    font-weight: 700;
-    font-size: 0.88rem;
-    text-decoration: none;
-}
-
-    .tt-ver-todos:hover {
-        text-decoration: underline;
-    }
-
-.tt-stock-no {
-    color: var(--rojo-oscuro);
-    font-weight: 700;
-}

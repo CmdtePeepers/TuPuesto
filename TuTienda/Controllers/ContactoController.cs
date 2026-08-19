@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuTienda.Data;
 using TuTienda.Models.Entities;
+using System.Security.Claims;
 
 namespace TuTienda.Controllers
 {
@@ -18,9 +19,23 @@ namespace TuTienda.Controllers
         // GET: Contacto/Contactanos -> formulario público
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Contactanos()
+        public async Task<IActionResult> Contactanos()
         {
-            return View(new Contacto());
+            var contacto = new Contacto();
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var usuario = await _context.Usuarios.FindAsync(usuarioId);
+
+                if (usuario != null)
+                {
+                    contacto.Nombre = $"{usuario.Nombres} {usuario.Apellidos}";
+                    contacto.Email = usuario.Email;
+                }
+            }
+
+            return View(contacto);
         }
 
         // POST: Contacto/Contactanos

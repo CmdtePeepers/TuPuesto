@@ -210,6 +210,19 @@
         .ct-btn-enviar:hover {
             background: #A8172A;
         }
+
+    .ct-campo input[readonly] {
+        background: #f5f0ec;
+        color: #6b6656;
+        cursor: not-allowed;
+    }
+
+    .ct-nota-cuenta {
+        display: block;
+        margin-top: 0.35rem;
+        font-size: 0.78rem;
+        color: #8a8574;
+    }
 </style>
 
 @if (TempData["Mensaje"] != null)
@@ -222,29 +235,29 @@
     <h1>Convierte tus productos en ventas reales</h1>
     <p>Miles de compradores buscan todos los días en TuTienda. Solicita tus credenciales de vendedor y empieza a publicar tu catálogo en minutos.</p>
     <button type="button" class="ct-btn-hero" onclick="abrirFormulario('Quiero ser vendedor')">
-        🚀 Solicitar credenciales de vendedor
+        Solicitar credenciales de vendedor
     </button>
 </div>
 
 <h2 class="ct-seccion-titulo">¿Por qué vender en TuTienda?</h2>
 <div class="ct-beneficios">
     <div class="ct-beneficio">
-        <div class="ct-beneficio-icono">🛍️</div>
+        <div class="ct-beneficio-icono"></div>
         <h4>Alcance masivo</h4>
         <p>Tu tienda visible para todos los compradores de la plataforma, sin costo de publicación.</p>
     </div>
     <div class="ct-beneficio">
-        <div class="ct-beneficio-icono">⚙️</div>
+        <div class="ct-beneficio-icono"></div>
         <h4>Panel propio</h4>
         <p>Gestiona tus productos, activa o desactiva tu inventario cuando quieras.</p>
     </div>
     <div class="ct-beneficio">
-        <div class="ct-beneficio-icono">📦</div>
+        <div class="ct-beneficio-icono"></div>
         <h4>Pedidos organizados</h4>
         <p>Cada venta llega directo a tu panel de pedidos, lista para confirmar y entregar.</p>
     </div>
     <div class="ct-beneficio">
-        <div class="ct-beneficio-icono">💬</div>
+        <div class="ct-beneficio-icono"></div>
         <h4>Contacto directo</h4>
         <p>Chatea con tus compradores para resolver dudas antes y después de la venta.</p>
     </div>
@@ -254,7 +267,7 @@
     <h3>¿Tienes otra consulta?</h3>
     <p>Soporte técnico, dudas generales o cualquier otro tema — también puedes escribirnos.</p>
     <button type="button" class="ct-btn-outline" onclick="abrirFormulario('')">
-        ✉️ Enviar otra consulta
+        Enviar otra consulta
     </button>
 </div>
 
@@ -272,14 +285,18 @@
 
                     <div class="ct-campo">
                         <label asp-for="Nombre">Nombre completo</label>
-                        <input asp-for="Nombre" placeholder="Tu nombre" />
+                        <input asp-for="Nombre" placeholder="Tu nombre" readonly="@(User.Identity != null && User.Identity.IsAuthenticated)" />
                         <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
 
                     <div class="ct-campo">
                         <label asp-for="Email">Correo electrónico</label>
-                        <input asp-for="Email" placeholder="tucorreo@ejemplo.com" />
+                        <input asp-for="Email" placeholder="tucorreo@ejemplo.com" readonly="@(User.Identity != null && User.Identity.IsAuthenticated)" />
                         <span asp-validation-for="Email" class="text-danger"></span>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <small class="ct-nota-cuenta">Usamos los datos de tu cuenta.</small>
+                        }
                     </div>
 
                     <div class="ct-campo">

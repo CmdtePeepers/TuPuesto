@@ -19,7 +19,24 @@
     <div class="pg-header">
         <h1 class="pg-titulo">Gestionar pedidos</h1>
         <div class="pg-subtitulo">Revisa el detalle de cada pedido y actualiza su estado.</div>
+        <div class="pg-header">
+            <h1 class="pg-titulo">Gestionar pedidos</h1>
+            <div class="pg-subtitulo">Revisa el detalle de cada pedido y actualiza su estado.</div>
+        </div>
+
+        <form method="get" asp-action="Gestionar" class="pg-filtro">
+            <label for="filtroEstado">Filtrar por estado:</label>
+            <select name="estado" id="filtroEstado" onchange="this.form.submit()">
+                <option value="" selected="@(string.IsNullOrEmpty((string)ViewBag.EstadoSeleccionado))">Todos los estados</option>
+                <option value="Pendiente" selected="@(((string)ViewBag.EstadoSeleccionado) == "Pendiente")">Pendiente</option>
+                <option value="Confirmado" selected="@(((string)ViewBag.EstadoSeleccionado) == "Confirmado")">Confirmado</option>
+                <option value="Entregado" selected="@(((string)ViewBag.EstadoSeleccionado) == "Entregado")">Entregado</option>
+                <option value="Cancelado" selected="@(((string)ViewBag.EstadoSeleccionado) == "Cancelado")">Cancelado</option>
+            </select>
+        </form>
+
     </div>
+
 
     @if (TempData["Mensaje"] != null)
     {
