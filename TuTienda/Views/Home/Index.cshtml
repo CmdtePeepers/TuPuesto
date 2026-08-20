@@ -9,12 +9,12 @@
 <div class="tt-hero">
     <img src="~/imagenes/logo.png" alt="TuTienda"
          style="position:absolute; top:50%; right:1.2rem; transform:translateY(-50%); height:110px; max-height:110px; width:auto; max-width:220px; object-fit:contain; z-index:5;" />
-    <div class="tt-badge">🔥 Ofertas de miles de vendedores</div>
+    <div class="tt-badge"> Ofertas de miles de vendedores</div>
 
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div class="tt-eyebrow">Bienvenido de nuevo</div>
-        <h1 class="tt-titulo">Hola, @User.Identity.Name 👋</h1>
+        <h1 class="tt-titulo">Hola, @User.Identity.Name </h1>
         <p class="tt-subtitulo">
             @if (User.IsInRole("Vendedor"))
             {
@@ -76,7 +76,7 @@
         </div>
         <div class="col-md-4">
             <div class="tt-info-box text-center">
-                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);">🏪</div>
+                <div style="font-size:1.9rem; font-weight:800; color:var(--rojo-oscuro);"></div>
                 <div class="text-muted" style="font-size:0.85rem;">Tu tienda ya está publicada</div>
             </div>
         </div>
@@ -130,25 +130,25 @@ else if (ViewBag.EsAdministrador == true)
     <h2 class="tt-seccion-titulo">Accesos rápidos</h2>
     <div class="tt-rep-grid">
         <a asp-controller="Usuario" asp-action="Index" class="tt-rep-card">
-            <div class="tt-rep-icono"><i class="bi bi-people-fill"></i></div>
+            <div class="tt-rep-icono"></div>
             <div class="tt-rep-titulo">Usuarios</div>
             <div class="tt-rep-desc">Crea cuentas de vendedor y gestiona el acceso de todos los usuarios.</div>
             <div class="tt-rep-flecha">Gestionar →</div>
         </a>
         <a asp-controller="Categoria" asp-action="Index" class="tt-rep-card">
-            <div class="tt-rep-icono"><i class="bi bi-tags-fill"></i></div>
+            <div class="tt-rep-icono"></div>
             <div class="tt-rep-titulo">Categorías</div>
             <div class="tt-rep-desc">Mantén organizado el catálogo general de la plataforma.</div>
             <div class="tt-rep-flecha">Gestionar →</div>
         </a>
         <a asp-controller="Reporte" asp-action="Index" class="tt-rep-card">
-            <div class="tt-rep-icono"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="tt-rep-icono"></div>
             <div class="tt-rep-titulo">Reportes</div>
             <div class="tt-rep-desc">Ventas, productos más vendidos e ingresos por vendedor.</div>
             <div class="tt-rep-flecha">Ver reportes →</div>
         </a>
         <a asp-controller="Contacto" asp-action="Index" class="tt-rep-card">
-            <div class="tt-rep-icono"><i class="bi bi-envelope-fill"></i></div>
+            <div class="tt-rep-icono"></div>
             <div class="tt-rep-titulo">Mensajes de contacto</div>
             <div class="tt-rep-desc">Revisa y atiende las solicitudes recibidas.</div>
             <div class="tt-rep-flecha">Ver mensajes →</div>

@@ -101,7 +101,7 @@ namespace TuTienda.Controllers
 
         // GET: Producto/Categoria/5
         [AllowAnonymous]
-        public async Task<IActionResult> Categoria(int id, string? nombre, int paginaActual = 1, int elementosPorPagina = 8)
+        public async Task<IActionResult> Categoria(int id, string? nombre, int paginaActual = 1, int elementosPorPagina = 10)
         {
             var categoria = await _context.Categorias.FindAsync(id);
             if (categoria == null)
@@ -125,7 +125,7 @@ namespace TuTienda.Controllers
 
         // GET: Producto/Buscar -> combina nombre + categoría
         [AllowAnonymous]
-        public async Task<IActionResult> Buscar(string nombre, int categoriaId = 0, int paginaActual = 1, int elementosPorPagina = 8)
+        public async Task<IActionResult> Buscar(string nombre, int categoriaId = 0, int paginaActual = 1, int elementosPorPagina = 10)
         {
             var lista = await productoRepository.ObtenerProductosPaginados(nombre ?? "", 0, categoriaId, paginaActual, elementosPorPagina);
 

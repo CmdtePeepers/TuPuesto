@@ -82,7 +82,11 @@ namespace TuTienda.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CambiarEstado(int id, EstadoPedido nuevoEstado)
         {
-            var pedido = await _context.Pedidos.FindAsync(id);
+            var pedido = await _context.Pedidos
+                .Include(p => p.Detalles)
+                    .ThenInclude(d => d.Producto)
+                .FirstOrDefaultAsync(p => p.Id == id);
+
             if (pedido == null)
             {
                 return NotFound();
@@ -107,11 +111,26 @@ namespace TuTienda.Controllers
                 return RedirectToAction(nameof(Gestionar));
             }
 
+            // Al cancelar, devolvemos el stock reservado en el checkout de vuelta al inventario del vendedor
+            if (nuevoEstado == EstadoPedido.Cancelado)
+            {
+                foreach (var detalle in pedido.Detalles)
+                {
+                    if (detalle.Producto != null)
+                    {
+                        detalle.Producto.Stock += detalle.Cantidad;
+                    }
+                }
+            }
+
             pedido.Estado = nuevoEstado;
             await _context.SaveChangesAsync();
 
-            TempData["Mensaje"] = $"Pedido #{pedido.Id} actualizado a \"{nuevoEstado}\".";
+            TempData["Mensaje"] = nuevoEstado == EstadoPedido.Cancelado
+                ? $"Pedido #{pedido.Id} cancelado. El stock de sus productos fue restaurado."
+                : $"Pedido #{pedido.Id} actualizado a \"{nuevoEstado}\".";
+
             return RedirectToAction(nameof(Gestionar));
         }
     }
-}
+    }
